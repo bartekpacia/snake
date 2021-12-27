@@ -7,6 +7,7 @@
 sfml/
 
 # generated stuff
+snake
 Release
 Debug
 *.o
