@@ -29,10 +29,10 @@ bool GUI::update() {
 
     window_.clear(settings_.color_background);
 
+    handle_input();
     render_grid();
 
     window_.display();
-    window_.setTitle("snake");
     sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
     return true;
 }
@@ -60,9 +60,6 @@ void GUI::handle_input() {
                 status_keys_[int(StatusKey::LEFT)] = true;
             if (event.key.code == sf::Keyboard::Right)
                 status_keys_[int(StatusKey::RIGHT)] = true;
-
-            if (event.key.code == sf::Keyboard::S)
-                save_screenshot();
         }
 
         if (event.type == sf::Event::KeyReleased) {
@@ -81,35 +78,12 @@ void GUI::handle_input() {
 void GUI::render_grid() {
     std::cout << "render grid" << std::endl;
     for (int i = 0; i < 100; i++) {
-        auto y = (settings_.width / 100) * i;
         for (int j = 0; j < 100; j++) {
-            auto x = (settings_.height / 100) * j;
+            auto x = (settings_.width / 100) * j;
+            auto y = (settings_.height / 100) * i;
 
-            auto point = sf::Vertex(sf::Vector2f(x, y), Color::Black);
+            auto point = sf::Vertex(sf::Vector2f(x, y), Color::Red);
             window_.draw(&point, 1, sf::Points);
         }
-    }
-}
-
-bool GUI::save_screenshot() {
-    auto t = std::time(nullptr);
-    auto tm = *std::localtime(&t);
-    std::ostringstream oss;
-    oss << std::put_time(&tm, "%d.%m.%Y-%H.%M.%S");
-
-    auto filename = settings_.output_dir + "/screenshot-" +
-                    std::to_string(++screenshots_cnt_) + "-" + oss.str() +
-                    ".png";
-
-    sf::Texture texture;
-    texture.create(settings_.width, settings_.height);
-    texture.update(window_);
-
-    if (!texture.copyToImage().saveToFile(filename)) {
-        std::cerr << "snake: error: unable to save screenshot" << std::endl;
-        return false;
-    } else {
-        std::cout << "snake: screenshot saved to " << filename << std::endl;
-        return true;
     }
 }

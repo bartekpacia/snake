@@ -15,7 +15,6 @@ int App::run() {
         // ..and visualize it in the GUI
         if (running_ && gui_) {
             bool ok = gui_->update();
-            std::cout << "update" << std::endl;
             if (!ok) {
                 running_ = false;
             }
