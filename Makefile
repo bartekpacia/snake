@@ -27,5 +27,8 @@ gui.o: src/gui.cpp
 install:
 	cp ./$(PROGRAM) /usr/local/bin
 
+run: all
+	./snake
+
 clean:
 	rm -f *.o src/*.o $(PROGRAM)

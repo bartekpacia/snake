@@ -12,7 +12,7 @@ typedef sf::Color Color;
 
 struct GUISettings {
     bool running = true;
-    unsigned int width = 1280;
+    unsigned int width = 720;
     unsigned int height = 720;
     sf::Font font;
     float sleep_time_ms = 1000.0f / 30.0f;
