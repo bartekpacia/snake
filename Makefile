@@ -7,11 +7,11 @@ LDFLAGS := -L$(ROOT)/sfml/lib
 INCLUDES := -I$(ROOT)/include -I$(ROOT)/sfml/include
 PROGRAM := snake
 
-all: main.o app.o gui.o
+all: main.o app.o game.o
 	$(CXX) --output $(PROGRAM) \
 	main.o \
 	app.o \
-	gui.o \
+	game.o \
 	$(LDFLAGS) \
 	$(LIBS)
 
@@ -21,8 +21,8 @@ main.o: src/main.cpp
 app.o: src/app.cpp
 	$(CXX) $(CPPFLAGS) -c src/app.cpp $(INCLUDES)
 
-gui.o: src/gui.cpp
-	$(CXX) $(CPPFLAGS) -c src/gui.cpp $(INCLUDES)
+game.o: src/game.cpp
+	$(CXX) $(CPPFLAGS) -c src/game.cpp $(INCLUDES)
 
 install:
 	cp ./$(PROGRAM) /usr/local/bin

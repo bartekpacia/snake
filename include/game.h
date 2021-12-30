@@ -4,13 +4,14 @@
 #include <SFML/Window.hpp>
 #include <iomanip>
 #include <iostream>
+#include <random>
 #include <sstream>
 #include <string>
 #include <vector>
 
 typedef sf::Color Color;
 
-struct GUISettings {
+struct GameSettings {
     bool running = true;
     unsigned int width = 720;
     unsigned int height = 720;
@@ -24,13 +25,15 @@ struct GUISettings {
     unsigned int antialiasing = 8;
 };
 
+enum class TileObject { Empty, Snake, Point };
+
 /**
  * GUI is responsible for the visual layer of the application and interacting
  * with the user.
  */
-class GUI {
+class Game {
    public:
-    explicit GUI(const GUISettings& settings);
+    explicit Game(const GameSettings& settings);
     virtual bool update();
 
    private:
@@ -45,8 +48,9 @@ class GUI {
     void handle_input();
     void render_grid();
 
-    GUISettings settings_;
+    std::vector<std::vector<TileObject>> state_;
+
+    GameSettings settings_;
     sf::RenderWindow window_;
     bool status_keys_[int(StatusKey::COUNT)];
-    size_t screenshots_cnt_;
 };

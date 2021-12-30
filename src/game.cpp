@@ -1,6 +1,6 @@
-#include "../include/gui.h"
+#include "../include/game.h"
 
-GUI::GUI(const GUISettings& settings) {
+Game::Game(const GameSettings& settings) {
     settings_ = settings;
 
     sf::ContextSettings window_settings;
@@ -18,10 +18,31 @@ GUI::GUI(const GUISettings& settings) {
         status_keys_[i] = false;
     }
 
-    screenshots_cnt_ = 0;
+    // fill the board with empty tiles
+    for (auto i = 0; i < settings.grid_size; i++) {
+        std::vector<TileObject> row;
+        for (auto j = 0; j < settings.grid_size; j++) {
+            row.push_back(TileObject::Empty);
+        }
+        state_.push_back(row);
+    }
+
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_int_distribution<> random(0, settings.grid_size);
+
+    // // place snake head on the board
+    // int snake_initial_i = random(generator);
+    // int snake_initial_j = random(generator);
+    // state_[snake_initial_i][snake_initial_j] = TileObject::Snake;
+
+    // // place the first point on the board
+    // int point_initial_i = random(generator);
+    // int point_initial_j = random(generator);
+    // state_[point_initial_i][point_initial_j] = TileObject::Point;
 }
 
-bool GUI::update() {
+bool Game::update() {
     if (!settings_.running) {
         window_.close();
         return false;
@@ -37,7 +58,7 @@ bool GUI::update() {
     return true;
 }
 
-void GUI::handle_input() {
+void Game::handle_input() {
     sf::Event event;
     while (window_.pollEvent(event)) {
         if (event.type == sf::Event::Resized) {
@@ -75,14 +96,22 @@ void GUI::handle_input() {
     }
 }
 
-void GUI::render_grid() {
+void Game::render_grid() {
     double size = settings_.grid_size;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             auto x = (settings_.width / size) * j;
             auto y = (settings_.height / size) * i;
 
-            auto point = sf::Vertex(sf::Vector2f(x, y), Color::Red);
+            Color color = Color::Red;
+            if (state_[i][j] == TileObject::Snake) {
+                color = Color::Green;
+            }
+            if (state_[i][j] == TileObject::Point) {
+                color = Color::Green;
+            }
+
+            auto point = sf::Vertex(sf::Vector2f(x, y), color);
             window_.draw(&point, 1, sf::Points);
         }
     }

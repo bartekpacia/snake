@@ -12,7 +12,6 @@ App::~App() = default;
 
 int App::run() {
     while (running_) {
-        // ..and visualize it in the GUI
         if (running_ && gui_) {
             bool ok = gui_->update();
             if (!ok) {
@@ -80,14 +79,13 @@ bool App::init(std::vector<std::string>& args) {
     }
 
     // Initialize the GUI
-    GUISettings sfml_settings;
+    GameSettings settings;
 
-    std::stringstream(get_flag_value(args, "-W", "--width")) >>
-        sfml_settings.width;
+    std::stringstream(get_flag_value(args, "-W", "--width")) >> settings.width;
     std::stringstream(get_flag_value(args, "-H", "--height")) >>
-        sfml_settings.height;
+        settings.height;
 
-    gui_ = std::make_unique<GUI>(sfml_settings);
+    gui_ = std::make_unique<Game>(settings);
 
     std::cout << "init completed" << std::endl;
 
