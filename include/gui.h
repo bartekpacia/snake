@@ -14,6 +14,7 @@ struct GUISettings {
     bool running = true;
     unsigned int width = 720;
     unsigned int height = 720;
+    unsigned int grid_size = 16;
     sf::Font font;
     float sleep_time_ms = 1000.0f / 30.0f;
 

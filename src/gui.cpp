@@ -76,11 +76,11 @@ void GUI::handle_input() {
 }
 
 void GUI::render_grid() {
-    std::cout << "render grid" << std::endl;
-    for (int i = 0; i < 64; i++) {
-        for (int j = 0; j < 64; j++) {
-            auto x = (settings_.width / 64) * j;
-            auto y = (settings_.height / 64) * i;
+    double size = settings_.grid_size;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            auto x = (settings_.width / size) * j;
+            auto y = (settings_.height / size) * i;
 
             auto point = sf::Vertex(sf::Vector2f(x, y), Color::Red);
             window_.draw(&point, 1, sf::Points);
