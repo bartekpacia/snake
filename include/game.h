@@ -51,6 +51,8 @@ class Game {
     void render_grid();
 
     std::vector<std::vector<TileObject>> state_;
+    sf::Vector2i snake_head_pos_;
+    sf::Vector2i point_pos_;
 
     GameSettings settings_;
     sf::RenderWindow window_;
