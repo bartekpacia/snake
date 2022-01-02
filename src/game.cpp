@@ -29,7 +29,7 @@ Game::Game(const GameSettings& settings) {
 
     std::random_device random_device;
     std::mt19937 generator(random_device());
-    std::uniform_int_distribution<> random(0, settings.grid_size);
+    std::uniform_int_distribution<> random(0, settings.grid_size - 1);
 
     // place snake head on the board
     int snake_initial_i = random(generator);
@@ -108,7 +108,7 @@ void Game::render_grid() {
                 color = Color::Green;
             }
             if (state_[i][j] == TileObject::Point) {
-                color = Color::Green;
+                color = Color::Yellow;
             }
 
             auto point = sf::Vertex(sf::Vector2f(x, y), color);
