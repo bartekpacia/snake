@@ -41,7 +41,7 @@ Game::Game(const GameSettings& settings) {
 
     // place the first point on the board
     point_pos_ = sf::Vector2i(random(generator), random(generator));
-    state_[point_pos_.x][point_pos_.y] = TileObject::Point;
+    state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
 
     std::cout << "point: x: " << point_pos_.x << ", y:" << point_pos_.y
               << std::endl;
@@ -79,17 +79,38 @@ void Game::move_snake() {
         snake_new_head_pos.y > settings_.grid_size - 1) {
         std::cout << "LOST (OUT OF BOUNDS)" << std::endl;
         settings_.running = false;
+        return;
     }
 
     // collected crystal
     if (snake_new_head_pos.x == point_pos_.x &&
         snake_new_head_pos.y == point_pos_.y) {
         std::cout << "COLLECT" << std::endl;
+
+        score_++;
+        new_crystal();
     }
 
     state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
     snake_head_pos_ = snake_new_head_pos;
     state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+}
+
+void Game::new_crystal() {
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_int_distribution<> random(0, settings_.grid_size - 1);
+
+    unsigned int x;
+    unsigned int y;
+
+    do {
+        x = random(generator);
+        y = random(generator);
+    } while (x == snake_head_pos_.x && y == snake_head_pos_.y);
+
+    state_[x][y] = TileObject::Pickup;
+    point_pos_ = sf::Vector2i(x, y);
 }
 
 bool Game::update() {
@@ -103,9 +124,14 @@ bool Game::update() {
     handle_logic();
     handle_input();
     render_grid();
+    render_ui();
 
     window_.display();
     sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
+
+    std::cout << "snake x:" << snake_head_pos_.x << ", y:" << snake_head_pos_.y
+              << std::endl;
+
     return true;
 }
 
@@ -150,22 +176,21 @@ void Game::handle_input() {
 }
 
 void Game::render_grid() {
-    double grid_size = settings_.grid_size;
-    double width = settings_.width / grid_size;
-    double height = settings_.height / grid_size;
+    double width = settings_.width / settings_.grid_size;
+    double height = settings_.height / settings_.grid_size;
 
-    for (int i = 0; i < grid_size; i++) {
-        for (int j = 0; j < grid_size; j++) {
+    for (int i = 0; i < settings_.grid_size; i++) {
+        for (int j = 0; j < settings_.grid_size; j++) {
             auto x = width * i;
             auto y = height * j;
             auto tileObject = state_[i][j];
 
-            Color color = Color::Black;
+            Color color = settings_.color_background;
             if (tileObject == TileObject::Snake) {
-                color = Color::Green;
+                color = settings_.color_snake;
             }
-            if (tileObject == TileObject::Point) {
-                color = Color::Yellow;
+            if (tileObject == TileObject::Pickup) {
+                color = settings_.color_pickup;
             }
 
             auto tile = sf::RectangleShape(sf::Vector2f(width, height));
@@ -174,4 +199,22 @@ void Game::render_grid() {
             window_.draw(tile);
         }
     }
+}
+
+void Game::render_ui() {
+    sf::Text text;
+
+    text.setFont(settings_.font);
+
+    // set the string to display
+    std::string s;
+    s.append("Score: ");
+    s.append(std::to_string(score_));
+    text.setString(s);
+
+    text.setCharacterSize(24);  // in pixels, not points!
+    text.setFillColor(settings_.color_ui);
+    text.setStyle(sf::Text::Bold);
+    text.setPosition(32, 32);
+    window_.draw(text);
 }

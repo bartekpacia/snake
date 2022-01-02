@@ -21,12 +21,14 @@ struct GameSettings {
     float sleep_time_ms = 1000.0f / 30.0f;
 
     Color color_background = Color::Black;
-    Color color_grid = Color(40, 40, 50);
+    Color color_snake = Color::Green;
+    Color color_pickup = Color::Yellow;
+    Color color_ui = Color::White;
 
     unsigned int antialiasing = 8;
 };
 
-enum class TileObject { Empty, Snake, Point };
+enum class TileObject { Empty, Snake, Pickup };
 
 /**
  * GUI is responsible for the visual layer of the application and interacting
@@ -46,12 +48,26 @@ class Game {
         DOWN,
     };
 
+    // event loop methods
+
     void handle_logic();
     void handle_input();
     void render_grid();
+    void render_ui();
 
+    // game event methods
     void move_snake();
 
+    // Generates a new crystal.
+    //
+    // This method assumes that there is no crystal is present when it is
+    // called. It takes snake's position into account and guarantees that new
+    // crystal's position will not overlap with snake's position at the time of
+    // invocation.
+    void new_crystal();
+
+    // Is also a snake length.
+    unsigned int score_;
     std::vector<std::vector<TileObject>> state_;
     sf::Vector2i snake_head_pos_;
     sf::Vector2i point_pos_;
