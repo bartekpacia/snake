@@ -38,12 +38,11 @@ class Game {
     virtual ~Game() = default;
 
    private:
-    enum class StatusKey {
+    enum class MoveStatus {
         UP,
         RIGHT,
         DOWN,
         LEFT,
-        COUNT,
     };
 
     void handle_input();
@@ -53,5 +52,5 @@ class Game {
 
     GameSettings settings_;
     sf::RenderWindow window_;
-    bool status_keys_[int(StatusKey::COUNT)];
+    MoveStatus move_status_;
 };

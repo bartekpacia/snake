@@ -14,9 +14,7 @@ Game::Game(const GameSettings& settings) {
                    sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize,
                    window_settings);
 
-    for (int i = 0; i < int(StatusKey::COUNT); i++) {
-        status_keys_[i] = false;
-    }
+    move_status_ = MoveStatus::UP;
 
     // fill the board with empty tiles
     for (auto i = 0; i < settings.grid_size; i++) {
@@ -74,24 +72,13 @@ void Game::handle_input() {
             settings_.running = false;
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Up)
-                status_keys_[int(StatusKey::UP)] = true;
+                move_status_ = MoveStatus::UP;
             if (event.key.code == sf::Keyboard::Down)
-                status_keys_[int(StatusKey::DOWN)] = true;
+                move_status_ = MoveStatus::DOWN;
             if (event.key.code == sf::Keyboard::Left)
-                status_keys_[int(StatusKey::LEFT)] = true;
+                move_status_ = MoveStatus::LEFT;
             if (event.key.code == sf::Keyboard::Right)
-                status_keys_[int(StatusKey::RIGHT)] = true;
-        }
-
-        if (event.type == sf::Event::KeyReleased) {
-            if (event.key.code == sf::Keyboard::Up)
-                status_keys_[int(StatusKey::UP)] = false;
-            if (event.key.code == sf::Keyboard::Down)
-                status_keys_[int(StatusKey::DOWN)] = false;
-            if (event.key.code == sf::Keyboard::Left)
-                status_keys_[int(StatusKey::LEFT)] = false;
-            if (event.key.code == sf::Keyboard::Right)
-                status_keys_[int(StatusKey::RIGHT)] = false;
+                move_status_ = MoveStatus::RIGHT;
         }
     }
 }
