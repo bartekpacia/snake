@@ -14,7 +14,7 @@ Game::Game(const GameSettings& settings) {
                    sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize,
                    window_settings);
 
-    move_status_ = MoveStatus::UP;
+    move_status_ = MoveStatus::LEFT;
 
     timestamp_ = std::chrono::system_clock::now().time_since_epoch() /
                  std::chrono::seconds(1);
@@ -52,30 +52,27 @@ void Game::move_snake() {
         case MoveStatus::LEFT:
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
             snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
+                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y);
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
-
             break;
         case MoveStatus::UP:
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
             snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
-            std::cout << "going up" << std::endl;
             break;
         case MoveStatus::RIGHT:
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
             snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
+                sf::Vector2i(snake_head_pos_.x + 1, snake_head_pos_.y);
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
 
             break;
         case MoveStatus::DOWN:
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
             snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y - 1);
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
             state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
-            std::cout << "going down" << std::endl;
             break;
     }
 }
@@ -144,8 +141,8 @@ void Game::render_grid() {
 
     for (int i = 0; i < grid_size; i++) {
         for (int j = 0; j < grid_size; j++) {
-            auto x = width * j;
-            auto y = height * i;
+            auto x = width * i;
+            auto y = height * j;
             auto tileObject = state_[i][j];
 
             Color color = Color::Black;
