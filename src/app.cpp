@@ -87,7 +87,5 @@ bool App::init(std::vector<std::string>& args) {
 
     gui_ = std::make_unique<Game>(settings);
 
-    std::cout << "init completed" << std::endl;
-
     return true;
 }

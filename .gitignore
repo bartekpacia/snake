@@ -17,4 +17,5 @@ Debug
 # other
 *.user
 *.xcf
+*.log
 .DS_Store
