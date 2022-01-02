@@ -36,15 +36,48 @@ Game::Game(const GameSettings& settings) {
     snake_head_pos_ = sf::Vector2i(random(generator), random(generator));
     state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
 
-    std::cout << "here 1: x: " << snake_head_pos_.x
+    std::cout << "snake: x: " << snake_head_pos_.x
               << ", y:" << snake_head_pos_.y << std::endl;
 
     // place the first point on the board
     point_pos_ = sf::Vector2i(random(generator), random(generator));
     state_[point_pos_.x][point_pos_.y] = TileObject::Point;
 
-    std::cout << "here 2: x: " << point_pos_.x << ", y:" << point_pos_.y
+    std::cout << "point: x: " << point_pos_.x << ", y:" << point_pos_.y
               << std::endl;
+}
+
+void Game::move_snake() {
+    switch (move_status_) {
+        case MoveStatus::LEFT:
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
+            snake_head_pos_ =
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+
+            break;
+        case MoveStatus::UP:
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
+            snake_head_pos_ =
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+            std::cout << "going up" << std::endl;
+            break;
+        case MoveStatus::RIGHT:
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
+            snake_head_pos_ =
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+
+            break;
+        case MoveStatus::DOWN:
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
+            snake_head_pos_ =
+                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y - 1);
+            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+            std::cout << "going down" << std::endl;
+            break;
+    }
 }
 
 bool Game::update() {
@@ -70,18 +103,7 @@ void Game::handle_logic() {
 
     if (new_timestamp > timestamp_) {
         std::cout << static_cast<int>(move_status_) << std::endl;
-
-        switch (move_status_) {
-            case MoveStatus::LEFT:
-
-                break;
-            case MoveStatus::UP:
-                break;
-            case MoveStatus::RIGHT:
-                break;
-            case MoveStatus::DOWN:
-                break;
-        }
+        move_snake();
     }
 
     // post-update
@@ -124,12 +146,13 @@ void Game::render_grid() {
         for (int j = 0; j < grid_size; j++) {
             auto x = width * j;
             auto y = height * i;
+            auto tileObject = state_[i][j];
 
             Color color = Color::Black;
-            if (state_[i][j] == TileObject::Snake) {
+            if (tileObject == TileObject::Snake) {
                 color = Color::Green;
             }
-            if (state_[i][j] == TileObject::Point) {
+            if (tileObject == TileObject::Point) {
                 color = Color::Yellow;
             }
 
@@ -137,9 +160,6 @@ void Game::render_grid() {
             tile.setPosition(x, y);
             tile.setFillColor(color);
             window_.draw(tile);
-
-            auto point = sf::Vertex(sf::Vector2f(x, y), color);
-            window_.draw(&point, 1, sf::Points);
         }
     }
 }

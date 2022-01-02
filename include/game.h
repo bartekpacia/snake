@@ -50,6 +50,8 @@ class Game {
     void handle_input();
     void render_grid();
 
+    void move_snake();
+
     std::vector<std::vector<TileObject>> state_;
     sf::Vector2i snake_head_pos_;
     sf::Vector2i point_pos_;
