@@ -16,6 +16,9 @@ Game::Game(const GameSettings& settings) {
 
     move_status_ = MoveStatus::UP;
 
+    timestamp_ = std::chrono::system_clock::now().time_since_epoch() /
+                 std::chrono::seconds(1);
+
     // fill the board with empty tiles
     for (auto i = 0; i < settings.grid_size; i++) {
         std::vector<TileObject> row;
@@ -48,12 +51,37 @@ bool Game::update() {
 
     window_.clear(settings_.color_background);
 
+    handle_logic();
     handle_input();
     render_grid();
 
     window_.display();
     sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
     return true;
+}
+
+void Game::handle_logic() {
+    auto new_timestamp = std::chrono::system_clock::now().time_since_epoch() /
+                         std::chrono::seconds(1);
+
+    if (new_timestamp > timestamp_) {
+        std::cout << static_cast<int>(move_status_) << std::endl;
+
+        switch (move_status_) {
+            case MoveStatus::LEFT:
+
+                break;
+            case MoveStatus::UP:
+                break;
+            case MoveStatus::RIGHT:
+                break;
+            case MoveStatus::DOWN:
+                break;
+        }
+    }
+
+    // post-update
+    timestamp_ = new_timestamp;
 }
 
 void Game::handle_input() {
@@ -71,14 +99,14 @@ void Game::handle_input() {
         if (event.type == sf::Event::Closed)
             settings_.running = false;
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Up)
-                move_status_ = MoveStatus::UP;
-            if (event.key.code == sf::Keyboard::Down)
-                move_status_ = MoveStatus::DOWN;
             if (event.key.code == sf::Keyboard::Left)
                 move_status_ = MoveStatus::LEFT;
+            if (event.key.code == sf::Keyboard::Up)
+                move_status_ = MoveStatus::UP;
             if (event.key.code == sf::Keyboard::Right)
                 move_status_ = MoveStatus::RIGHT;
+            if (event.key.code == sf::Keyboard::Down)
+                move_status_ = MoveStatus::DOWN;
         }
     }
 }

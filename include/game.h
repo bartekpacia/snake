@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <chrono>
 #include <iomanip>
 #include <iostream>
 #include <random>
@@ -39,12 +40,13 @@ class Game {
 
    private:
     enum class MoveStatus {
+        LEFT,
         UP,
         RIGHT,
         DOWN,
-        LEFT,
     };
 
+    void handle_logic();
     void handle_input();
     void render_grid();
 
@@ -53,4 +55,5 @@ class Game {
     GameSettings settings_;
     sf::RenderWindow window_;
     MoveStatus move_status_;
+    std::chrono::seconds::rep timestamp_;
 };
