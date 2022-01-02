@@ -48,33 +48,42 @@ Game::Game(const GameSettings& settings) {
 }
 
 void Game::move_snake() {
-    switch (move_status_) {
-        case MoveStatus::LEFT:
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
-            snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y);
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
-            break;
-        case MoveStatus::UP:
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
-            snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
-            break;
-        case MoveStatus::RIGHT:
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
-            snake_head_pos_ =
-                sf::Vector2i(snake_head_pos_.x + 1, snake_head_pos_.y);
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+    sf::Vector2i snake_new_head_pos;
 
+    switch (move_status_) {
+        case MoveStatus::LEFT: {
+            snake_new_head_pos =
+                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y);
             break;
-        case MoveStatus::DOWN:
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
-            snake_head_pos_ =
+        }
+        case MoveStatus::UP: {
+            snake_new_head_pos =
+                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
+            break;
+        }
+        case MoveStatus::RIGHT: {
+            snake_new_head_pos =
+                sf::Vector2i(snake_head_pos_.x + 1, snake_head_pos_.y);
+            break;
+        }
+        case MoveStatus::DOWN: {
+            snake_new_head_pos =
                 sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
-            state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
             break;
+        }
     }
+
+    // out of bounds
+    if (snake_new_head_pos.x < 0 || snake_new_head_pos.y < 0 ||
+        snake_new_head_pos.x > settings_.grid_size - 1 ||
+        snake_new_head_pos.y > settings_.grid_size - 1) {
+        std::cout << "LOST (OUT OF BOUNDS)" << std::endl;
+        settings_.running = false;
+    }
+
+    state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
+    snake_head_pos_ = snake_new_head_pos;
+    state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
 }
 
 bool Game::update() {
