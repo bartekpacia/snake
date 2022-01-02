@@ -97,19 +97,27 @@ void Game::handle_input() {
 }
 
 void Game::render_grid() {
-    double size = settings_.grid_size;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            auto x = (settings_.width / size) * j;
-            auto y = (settings_.height / size) * i;
+    double grid_size = settings_.grid_size;
+    double width = settings_.width / grid_size;
+    double height = settings_.height / grid_size;
 
-            Color color = Color::Red;
+    for (int i = 0; i < grid_size; i++) {
+        for (int j = 0; j < grid_size; j++) {
+            auto x = width * j;
+            auto y = height * i;
+
+            Color color = Color::Black;
             if (state_[i][j] == TileObject::Snake) {
                 color = Color::Green;
             }
             if (state_[i][j] == TileObject::Point) {
                 color = Color::Yellow;
             }
+
+            auto tile = sf::RectangleShape(sf::Vector2f(width, height));
+            tile.setPosition(x, y);
+            tile.setFillColor(color);
+            window_.draw(tile);
 
             auto point = sf::Vertex(sf::Vector2f(x, y), color);
             window_.draw(&point, 1, sf::Points);
