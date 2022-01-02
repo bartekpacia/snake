@@ -7,9 +7,9 @@
 # global variable verbose is set to true. If it is false, it does
 # nothing.
 _log() {
-  if [ $verbose = true ]; then
-    printf "$1"
-  fi
+    if [ $verbose = true ]; then
+        printf "$1"
+    fi
 }
 
 ### Actual beginning.
@@ -18,33 +18,33 @@ set -e
 
 verbose=false
 if [[ "$1" = "-v" || "$1" = "--verbose" ]]; then
-  verbose=true
+    verbose=true
 fi
 
 if [ -d "sfml" ]; then
-  printf "install_sfml: sfml directory already exists\n"
-  exit 1
+    printf "install_sfml: sfml directory already exists\n"
+    exit 1
 else
-  printf "install_sfml: creating sfml directory..."
-  mkdir sfml
-  printf "ok\n"
+    printf "install_sfml: creating sfml directory..."
+    mkdir sfml
+    printf "ok\n"
 fi
 
 
 download_url="null"
 case "$(uname -s)" in
-  Linux*)
-    download_url="https://www.sfml-dev.org/files/SFML-2.5.1-linux-gcc-64-bit.tar.gz"
-    _log "install_sfml: detected Linux host\n"
-  ;;
-  Darwin*)
-    download_url="https://www.sfml-dev.org/files/SFML-2.5.1-macOS-clang.tar.gz"
-    _log "install_sfml: detected macOS host\n"
-  ;;
-  *)
-    printf "install_sfml: error: unknown operating system\n"
-    exit 1
-  ;;
+    Linux*)
+        download_url="https://www.sfml-dev.org/files/SFML-2.5.1-linux-gcc-64-bit.tar.gz"
+        _log "install_sfml: detected Linux host\n"
+    ;;
+    Darwin*)
+        download_url="https://www.sfml-dev.org/files/SFML-2.5.1-macOS-clang.tar.gz"
+        _log "install_sfml: detected macOS host\n"
+    ;;
+    *)
+        printf "install_sfml: error: unknown operating system\n"
+        exit 1
+    ;;
 esac
 
 _log "install_sfml: downloading SFML..."

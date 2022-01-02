@@ -31,15 +31,15 @@ Game::Game(const GameSettings& settings) {
     std::mt19937 generator(random_device());
     std::uniform_int_distribution<> random(0, settings.grid_size);
 
-    // // place snake head on the board
-    // int snake_initial_i = random(generator);
-    // int snake_initial_j = random(generator);
-    // state_[snake_initial_i][snake_initial_j] = TileObject::Snake;
+    // place snake head on the board
+    int snake_initial_i = random(generator);
+    int snake_initial_j = random(generator);
+    state_[snake_initial_i][snake_initial_j] = TileObject::Snake;
 
-    // // place the first point on the board
-    // int point_initial_i = random(generator);
-    // int point_initial_j = random(generator);
-    // state_[point_initial_i][point_initial_j] = TileObject::Point;
+    // place the first point on the board
+    int point_initial_i = random(generator);
+    int point_initial_j = random(generator);
+    state_[point_initial_i][point_initial_j] = TileObject::Point;
 }
 
 bool Game::update() {

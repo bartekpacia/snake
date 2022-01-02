@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "clang++ - Build and debug active file",
+      "type": "lldb",
+      "targetArchitecture": "arm64",
+      "request": "launch",
+      "program": "${workspaceFolder}/snake",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "lldb",
+      "preLaunchTask": "C/C++: make"
+    }
+  ]
+}

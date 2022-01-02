@@ -35,6 +35,7 @@ class Game {
    public:
     explicit Game(const GameSettings& settings);
     virtual bool update();
+    virtual ~Game() = default;
 
    private:
     enum class StatusKey {

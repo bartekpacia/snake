@@ -1,6 +1,6 @@
 # tools
 .vs/
-.vscode/
+# .vscode/
 .idea/
 
 # dependency dirs

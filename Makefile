@@ -1,7 +1,7 @@
 ROOT := ${CURDIR}
 
 CXX := g++
-CPPFLAGS := -std=c++17
+CPPFLAGS := -std=c++17 -g -Wall
 LIBS := -lsfml-graphics -lsfml-window -lsfml-system
 LDFLAGS := -L$(ROOT)/sfml/lib
 INCLUDES := -I$(ROOT)/include -I$(ROOT)/sfml/include
