@@ -81,6 +81,12 @@ void Game::move_snake() {
         settings_.running = false;
     }
 
+    // collected crystal
+    if (snake_new_head_pos.x == point_pos_.x &&
+        snake_new_head_pos.y == point_pos_.y) {
+        std::cout << "COLLECT" << std::endl;
+    }
+
     state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
     snake_head_pos_ = snake_new_head_pos;
     state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
