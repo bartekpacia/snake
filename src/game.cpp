@@ -33,11 +33,16 @@ Game::Game(const GameSettings& settings) {
     std::uniform_int_distribution<> random(0, settings.grid_size - 1);
 
     // place snake head on the board
-    snake_head_pos_ = sf::Vector2i(random(generator), random(generator));
-    state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+    auto snake_head_position =
+        sf::Vector2i(random(generator), random(generator));
 
-    std::cout << "snake: x: " << snake_head_pos_.x
-              << ", y:" << snake_head_pos_.y << std::endl;
+    // Always update these two state variables when updating snake position.
+    snake_positions_.push_back(snake_head_position);
+    state_[snake_positions_.front().x][snake_positions_.front().y] =
+        TileObject::Snake;
+
+    std::cout << "snake: x: " << snake_positions_.front().x
+              << ", y:" << snake_positions_.front().y << std::endl;
 
     // place the first point on the board
     point_pos_ = sf::Vector2i(random(generator), random(generator));
@@ -48,52 +53,60 @@ Game::Game(const GameSettings& settings) {
 }
 
 void Game::move_snake() {
-    sf::Vector2i snake_new_head_pos;
+    std::vector<sf::Vector2i> new_snake_positions =
+        std::vector(snake_positions_);
 
     switch (move_status_) {
         case MoveStatus::LEFT: {
-            snake_new_head_pos =
-                sf::Vector2i(snake_head_pos_.x - 1, snake_head_pos_.y);
+            new_snake_positions[0] =
+                sf::Vector2i(snake_positions_[0].x - 1, snake_positions_[0].y);
             break;
         }
         case MoveStatus::UP: {
-            snake_new_head_pos =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y - 1);
+            new_snake_positions[0] =
+                sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y - 1);
             break;
         }
         case MoveStatus::RIGHT: {
-            snake_new_head_pos =
-                sf::Vector2i(snake_head_pos_.x + 1, snake_head_pos_.y);
+            new_snake_positions[0] =
+                sf::Vector2i(snake_positions_[0].x + 1, snake_positions_[0].y);
             break;
         }
         case MoveStatus::DOWN: {
-            snake_new_head_pos =
-                sf::Vector2i(snake_head_pos_.x, snake_head_pos_.y + 1);
+            new_snake_positions[0] =
+                sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y + 1);
             break;
         }
     }
 
     // out of bounds
-    if (snake_new_head_pos.x < 0 || snake_new_head_pos.y < 0 ||
-        snake_new_head_pos.x > settings_.grid_size - 1 ||
-        snake_new_head_pos.y > settings_.grid_size - 1) {
+    if (new_snake_positions[0].x < 0 || new_snake_positions[0].y < 0 ||
+        new_snake_positions[0].x > settings_.grid_size - 1 ||
+        new_snake_positions[0].y > settings_.grid_size - 1) {
         std::cout << "LOST (OUT OF BOUNDS)" << std::endl;
         settings_.running = false;
         return;
     }
 
     // collected crystal
-    if (snake_new_head_pos.x == point_pos_.x &&
-        snake_new_head_pos.y == point_pos_.y) {
+    if (new_snake_positions[0].x == point_pos_.x &&
+        new_snake_positions[0].y == point_pos_.y) {
         std::cout << "COLLECT" << std::endl;
 
         score_++;
         new_crystal();
     }
 
-    state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Empty;
-    snake_head_pos_ = snake_new_head_pos;
-    state_[snake_head_pos_.x][snake_head_pos_.y] = TileObject::Snake;
+    // clear old snake
+    for (auto& old_snake_pos : snake_positions_) {
+        state_[old_snake_pos.x][old_snake_pos.y] = TileObject::Empty;
+    }
+
+    // update state with new snake
+    snake_positions_ = new_snake_positions;
+    for (auto& snake_pos : snake_positions_) {
+        state_[snake_pos.x][snake_pos.y] = TileObject::Snake;
+    }
 }
 
 void Game::new_crystal() {
@@ -107,7 +120,11 @@ void Game::new_crystal() {
     do {
         x = random(generator);
         y = random(generator);
-    } while (x == snake_head_pos_.x && y == snake_head_pos_.y);
+    } while (std::find(snake_positions_.begin(), snake_positions_.end(),
+                       sf::Vector2i(x, y)) !=
+             snake_positions_
+                 .end());  // snake_positions_.fin x == snake_positions_.x && y
+                           // == snake_positions_.y);
 
     state_[x][y] = TileObject::Pickup;
     point_pos_ = sf::Vector2i(x, y);
@@ -129,8 +146,9 @@ bool Game::update() {
     window_.display();
     sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
 
-    std::cout << "snake x:" << snake_head_pos_.x << ", y:" << snake_head_pos_.y
-              << std::endl;
+    // std::cout << "snake x:" << snake_positions_.x << ", y:" <<
+    // snake_positions_.y
+    //           << std::endl;
 
     return true;
 }

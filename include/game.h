@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <SFML/Window.hpp>
+#include <algorithm>
 #include <chrono>
 #include <iomanip>
 #include <iostream>
@@ -18,7 +19,7 @@ struct GameSettings {
     unsigned int height = 720;
     unsigned int grid_size = 16;
     sf::Font font;
-    float sleep_time_ms = 1000.0f / 30.0f;
+    float sleep_time_ms = 300.0f / 30.0f;  // 1000.0f / 30.0f;
 
     Color color_background = Color::Black;
     Color color_snake = Color::Green;
@@ -66,10 +67,10 @@ class Game {
     // invocation.
     void new_crystal();
 
-    // Is also a snake length.
+    // Current score. Is also a snake length.
     unsigned int score_;
     std::vector<std::vector<TileObject>> state_;
-    sf::Vector2i snake_head_pos_;
+    std::vector<sf::Vector2i> snake_positions_;
     sf::Vector2i point_pos_;
 
     GameSettings settings_;
