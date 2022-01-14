@@ -91,13 +91,25 @@ void Game::move_snake() {
         }
     }
 
-    // out of bounds
+    // LOST: out of bounds
     if (new_snake_positions[0].x < 0 || new_snake_positions[0].y < 0 ||
         new_snake_positions[0].x > settings_.grid_size - 1 ||
         new_snake_positions[0].y > settings_.grid_size - 1) {
         std::cout << "LOST (OUT OF BOUNDS)" << std::endl;
         settings_.running = false;
         return;
+    }
+
+    // LOST: snake hit itself
+    for (int i = 1; i < new_snake_positions.size(); i++) {
+        auto segment = new_snake_positions[i];
+        auto head = new_snake_positions.front();
+
+        if (head.x == segment.x && head.y == segment.y) {
+            std::cout << "LOST (SNAKE HIT ITSELF)" << std::endl;
+            settings_.running = false;
+            return;
+        }
     }
 
     // collected crystal
