@@ -19,7 +19,7 @@ struct GameSettings {
     unsigned int height = 720;
     unsigned int grid_size = 16;
     sf::Font font;
-    float sleep_time_ms = 300.0f / 30.0f;  // 1000.0f / 30.0f;
+    float sleep_time_ms = 500.0f / 30.0f;  // 1000.0f / 30.0f;
 
     Color color_background = Color::Black;
     Color color_snake = Color::Green;

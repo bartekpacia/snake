@@ -155,7 +155,7 @@ bool Game::update() {
 
 void Game::handle_logic() {
     auto new_timestamp = std::chrono::system_clock::now().time_since_epoch() /
-                         std::chrono::seconds(1);
+                         std::chrono::milliseconds(500);
 
     if (new_timestamp > timestamp_) {
         std::cout << static_cast<int>(move_status_) << std::endl;
