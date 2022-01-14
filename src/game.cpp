@@ -28,13 +28,9 @@ Game::Game(const GameSettings& settings) {
         state_.push_back(row);
     }
 
-    std::random_device random_device;
-    std::mt19937 generator(random_device());
-    std::uniform_int_distribution<> random(0, settings.grid_size - 1);
-
     // place snake head on the board
     auto snake_head_position =
-        sf::Vector2i(random(generator), random(generator));
+        sf::Vector2i(state_.size() / 2, state_.size() / 2);
 
     // Always update these two state variables when updating snake position.
     snake_positions_.push_back(snake_head_position);
@@ -45,6 +41,9 @@ Game::Game(const GameSettings& settings) {
               << ", y:" << snake_positions_.front().y << std::endl;
 
     // place the first point on the board
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_int_distribution<> random(0, settings.grid_size - 1);
     point_pos_ = sf::Vector2i(random(generator), random(generator));
     state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
 
