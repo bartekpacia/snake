@@ -34,6 +34,10 @@ Game::Game(const GameSettings& settings) {
 
     // Always update these two state variables when updating snake position.
     snake_positions_.push_back(snake_head_position);
+    snake_positions_.push_back(
+        sf::Vector2(snake_head_position.x, snake_head_position.y + 1));
+    snake_positions_.push_back(
+        sf::Vector2(snake_head_position.x, snake_head_position.y + 2));
     state_[snake_positions_.front().x][snake_positions_.front().y] =
         TileObject::Snake;
 
@@ -59,21 +63,34 @@ void Game::move_snake() {
         case MoveStatus::LEFT: {
             new_snake_positions[0] =
                 sf::Vector2i(snake_positions_[0].x - 1, snake_positions_[0].y);
+
+            for (int i = 1; i < snake_positions_.size(); i++) {
+                new_snake_positions[i] = snake_positions_[i - 1];
+            }
             break;
         }
         case MoveStatus::UP: {
             new_snake_positions[0] =
                 sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y - 1);
+            for (int i = 1; i < snake_positions_.size(); i++) {
+                new_snake_positions[i] = snake_positions_[i - 1];
+            }
             break;
         }
         case MoveStatus::RIGHT: {
             new_snake_positions[0] =
                 sf::Vector2i(snake_positions_[0].x + 1, snake_positions_[0].y);
+            for (int i = 1; i < snake_positions_.size(); i++) {
+                new_snake_positions[i] = snake_positions_[i - 1];
+            }
             break;
         }
         case MoveStatus::DOWN: {
             new_snake_positions[0] =
                 sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y + 1);
+            for (int i = 1; i < snake_positions_.size(); i++) {
+                new_snake_positions[i] = snake_positions_[i - 1];
+            }
             break;
         }
     }
@@ -93,6 +110,7 @@ void Game::move_snake() {
         std::cout << "COLLECT" << std::endl;
 
         score_++;
+
         new_crystal();
     }
 
