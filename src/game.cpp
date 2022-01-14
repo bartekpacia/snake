@@ -34,10 +34,6 @@ Game::Game(const GameSettings& settings) {
 
     // Always update these two state variables when updating snake position.
     snake_positions_.push_back(snake_head_position);
-    snake_positions_.push_back(
-        sf::Vector2(snake_head_position.x, snake_head_position.y + 1));
-    snake_positions_.push_back(
-        sf::Vector2(snake_head_position.x, snake_head_position.y + 2));
     state_[snake_positions_.front().x][snake_positions_.front().y] =
         TileObject::Snake;
 
@@ -110,6 +106,38 @@ void Game::move_snake() {
         std::cout << "COLLECT" << std::endl;
 
         score_++;
+
+        // very ugly solution of adding new position, but works just fine for
+        // the most part
+        sf::Vector2i new_segment_position;
+        switch (move_status_) {
+            case MoveStatus::LEFT: {
+                new_segment_position =
+                    sf::Vector2i(new_snake_positions.back().x + 1,
+                                 new_snake_positions.back().y);
+                break;
+            }
+            case MoveStatus::UP: {
+                new_segment_position =
+                    sf::Vector2i(new_snake_positions.back().x,
+                                 new_snake_positions.back().y + 1);
+                break;
+            }
+            case MoveStatus::RIGHT: {
+                new_segment_position =
+                    sf::Vector2i(new_snake_positions.back().x - 1,
+                                 new_snake_positions.back().y);
+                break;
+            }
+            case MoveStatus::DOWN: {
+                new_segment_position =
+                    sf::Vector2i(new_snake_positions.back().x,
+                                 new_snake_positions.back().y - 1);
+                break;
+            }
+        }
+
+        new_snake_positions.push_back(new_segment_position);
 
         new_crystal();
     }
