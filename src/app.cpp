@@ -12,13 +12,17 @@ App::~App() = default;
 
 int App::run() {
     while (running_) {
-        if (running_ && gui_) {
-            bool ok = gui_->update();
+        if (running_ && game_) {
+            bool ok = game_->update();
             if (!ok) {
                 running_ = false;
             }
         }
     }
+
+    std::ofstream high_score_output("high_score.txt");
+    high_score_output << game_->high_score();
+    high_score_output.close();
 
     return 0;
 }
@@ -85,7 +89,7 @@ bool App::init(std::vector<std::string>& args) {
     std::stringstream(get_flag_value(args, "-H", "--height")) >>
         settings.height;
 
-    gui_ = std::make_unique<Game>(settings);
+    game_ = std::make_unique<Game>(settings);
 
     return true;
 }

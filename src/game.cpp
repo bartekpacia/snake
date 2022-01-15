@@ -43,6 +43,17 @@ Game::Game(const GameSettings& settings) {
     std::uniform_int_distribution<> random(0, settings.grid_size - 1);
     point_pos_ = sf::Vector2i(random(generator), random(generator));
     state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
+
+    // load high score
+    std::ifstream input_score_file("high_score.txt");
+    if (input_score_file.fail()) {
+        high_score_ = 0;
+    } else {
+        std::stringstream buffer;
+        buffer << input_score_file.rdbuf();
+        std::string high_score = buffer.str();
+        high_score_ = std::stoi(high_score);
+    }
 }
 
 void Game::move_snake() {
@@ -205,7 +216,6 @@ void Game::handle_logic() {
                          std::chrono::milliseconds(500);
 
     if (new_timestamp > timestamp_) {
-        std::cout << static_cast<int>(move_status_) << std::endl;
         move_snake();
     }
 

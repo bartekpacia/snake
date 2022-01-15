@@ -19,3 +19,6 @@ Debug
 *.xcf
 *.log
 .DS_Store
+
+# game files
+high_score.txt

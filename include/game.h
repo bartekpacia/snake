@@ -4,6 +4,7 @@
 #include <SFML/Window.hpp>
 #include <algorithm>
 #include <chrono>
+#include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <random>
@@ -40,6 +41,10 @@ class Game {
     explicit Game(const GameSettings& settings);
     virtual bool update();
     virtual ~Game() = default;
+
+    int high_score() {
+        return high_score_;
+    }
 
    private:
     enum class MoveStatus {

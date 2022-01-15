@@ -28,5 +28,5 @@ class App {
     bool init(std::vector<std::string>& args);
 
     bool running_;
-    std::unique_ptr<Game> gui_;
+    std::unique_ptr<Game> game_;
 };
