@@ -37,18 +37,12 @@ Game::Game(const GameSettings& settings) {
     state_[snake_positions_.front().x][snake_positions_.front().y] =
         TileObject::Snake;
 
-    std::cout << "snake: x: " << snake_positions_.front().x
-              << ", y:" << snake_positions_.front().y << std::endl;
-
     // place the first point on the board
     std::random_device random_device;
     std::mt19937 generator(random_device());
     std::uniform_int_distribution<> random(0, settings.grid_size - 1);
     point_pos_ = sf::Vector2i(random(generator), random(generator));
     state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
-
-    std::cout << "point: x: " << point_pos_.x << ", y:" << point_pos_.y
-              << std::endl;
 }
 
 void Game::move_snake() {
@@ -178,10 +172,7 @@ void Game::new_crystal() {
         x = random(generator);
         y = random(generator);
     } while (std::find(snake_positions_.begin(), snake_positions_.end(),
-                       sf::Vector2i(x, y)) !=
-             snake_positions_
-                 .end());  // snake_positions_.fin x == snake_positions_.x && y
-                           // == snake_positions_.y);
+                       sf::Vector2i(x, y)) != snake_positions_.end());
 
     state_[x][y] = TileObject::Pickup;
     point_pos_ = sf::Vector2i(x, y);
@@ -202,10 +193,6 @@ bool Game::update() {
 
     window_.display();
     sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
-
-    // std::cout << "snake x:" << snake_positions_.x << ", y:" <<
-    // snake_positions_.y
-    //           << std::endl;
 
     return true;
 }
