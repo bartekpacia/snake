@@ -206,14 +206,13 @@ bool Game::update() {
     render_ui();
 
     window_.display();
-    sf::sleep(sf::milliseconds(settings_.sleep_time_ms));
 
     return true;
 }
 
 void Game::handle_logic() {
     auto new_timestamp = std::chrono::system_clock::now().time_since_epoch() /
-                         std::chrono::milliseconds(500);
+                         std::chrono::milliseconds(settings_.interval_ms);
 
     if (new_timestamp > timestamp_) {
         move_snake();

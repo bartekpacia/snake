@@ -35,9 +35,10 @@ void App::print_help() {
         << "Source: https://github.com/bartekpacia/snake\n"
         << "\n"
         << "\tOptions:\n"
-        << "\t-H  --height [val]             window height (defualt: 720)\n"
-        << "\t-W  --width [val]              window width (defualt: 720)\n"
-        << "\t-gs  --grid-size [val]             grid size (defualt: 16)\n";
+        << "\t-h  --height [val]             window height (default: 720)\n"
+        << "\t-w  --width [val]              window width (default: 720)\n"
+        << "\t-ms  --interval [val]          interval (ms) (default: 500)\n"
+        << "\t-sz  --grid-size [val]         grid size (default: 16)\n";
 }
 
 bool App::is_flag_present(std::vector<std::string>& all_args,
@@ -86,11 +87,13 @@ bool App::init(std::vector<std::string>& args) {
     // Initialize the GUI
     GameSettings settings;
 
-    std::stringstream(get_flag_value(args, "-W", "--width")) >> settings.width;
-    std::stringstream(get_flag_value(args, "-H", "--height")) >>
+    std::stringstream(get_flag_value(args, "-w", "--width")) >> settings.width;
+    std::stringstream(get_flag_value(args, "-h", "--height")) >>
         settings.height;
-    std::stringstream(get_flag_value(args, "-gs", "--grid-size")) >>
+    std::stringstream(get_flag_value(args, "-sz", "--grid-size")) >>
         settings.grid_size;
+    std::stringstream(get_flag_value(args, "-ms", "--interval")) >>
+        settings.interval_ms;
 
     game_ = std::make_unique<Game>(settings);
 

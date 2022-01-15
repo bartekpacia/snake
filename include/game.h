@@ -20,7 +20,7 @@ struct GameSettings {
     unsigned int height = 720;
     unsigned int grid_size = 16;
     sf::Font font;
-    float sleep_time_ms = 500.0f / 30.0f;  // 1000.0f / 30.0f;
+    unsigned int interval_ms = 500.0f;
 
     Color color_background = Color::Black;
     Color color_snake = Color::Green;
@@ -42,9 +42,7 @@ class Game {
     virtual bool update();
     virtual ~Game() = default;
 
-    int high_score() {
-        return high_score_;
-    }
+    int high_score() { return high_score_; }
 
    private:
     enum class MoveStatus {
