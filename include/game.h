@@ -67,8 +67,9 @@ class Game {
     // invocation.
     void new_crystal();
 
-    // Current score. Is also a snake length.
     unsigned int score_;
+    unsigned int high_score_;
+
     std::vector<std::vector<TileObject>> state_;
     std::vector<sf::Vector2i> snake_positions_;
     sf::Vector2i point_pos_;

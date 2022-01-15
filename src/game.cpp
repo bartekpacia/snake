@@ -112,6 +112,9 @@ void Game::move_snake() {
         std::cout << "COLLECT" << std::endl;
 
         score_++;
+        if (score_ > high_score_) {
+            high_score_ = score_;
+        }
 
         // very ugly solution of adding new position, but works just fine for
         // the most part
@@ -264,19 +267,35 @@ void Game::render_grid() {
 }
 
 void Game::render_ui() {
-    sf::Text text;
+    // render score text
+    sf::Text score_text;
 
-    text.setFont(settings_.font);
+    score_text.setFont(settings_.font);
 
-    // set the string to display
-    std::string s;
-    s.append("Score: ");
-    s.append(std::to_string(score_));
-    text.setString(s);
+    std::string score;
+    score.append("Score: ");
+    score.append(std::to_string(score_));
+    score_text.setString(score);
 
-    text.setCharacterSize(24);  // in pixels, not points!
-    text.setFillColor(settings_.color_ui);
-    text.setStyle(sf::Text::Bold);
-    text.setPosition(32, 32);
-    window_.draw(text);
+    score_text.setCharacterSize(24);
+    score_text.setFillColor(settings_.color_ui);
+    score_text.setStyle(sf::Text::Bold);
+    score_text.setPosition(32, 32);
+    window_.draw(score_text);
+
+    // render high score text
+    sf::Text high_score_text;
+
+    high_score_text.setFont(settings_.font);
+
+    std::string high_score;
+    high_score.append("High score: ");
+    high_score.append(std::to_string(high_score_));
+    high_score_text.setString(high_score);
+
+    high_score_text.setCharacterSize(24);
+    high_score_text.setFillColor(settings_.color_ui);
+    high_score_text.setStyle(sf::Text::Bold);
+    high_score_text.setPosition(256, 32);
+    window_.draw(high_score_text);
 }
