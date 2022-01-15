@@ -34,9 +34,10 @@ void App::print_help() {
         << "-----------------------------------------------------------\n"
         << "Source: https://github.com/bartekpacia/snake\n"
         << "\n"
-        << "\tGUI options:\n"
+        << "\tOptions:\n"
         << "\t-H  --height [val]             window height (defualt: 720)\n"
-        << "\t-W  --width [val]              window width (defualt: 720)\n";
+        << "\t-W  --width [val]              window width (defualt: 720)\n"
+        << "\t-gs  --grid-size [val]             grid size (defualt: 16)\n";
 }
 
 bool App::is_flag_present(std::vector<std::string>& all_args,
@@ -88,6 +89,8 @@ bool App::init(std::vector<std::string>& args) {
     std::stringstream(get_flag_value(args, "-W", "--width")) >> settings.width;
     std::stringstream(get_flag_value(args, "-H", "--height")) >>
         settings.height;
+    std::stringstream(get_flag_value(args, "-gs", "--grid-size")) >>
+        settings.grid_size;
 
     game_ = std::make_unique<Game>(settings);
 
