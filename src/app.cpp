@@ -31,7 +31,7 @@ void App::print_help() {
         << "Source: https://github.com/bartekpacia/snake\n"
         << "\n"
         << "\tGUI options:\n"
-        << "\t-H  --height [val]             window height (defualt: 1280)\n"
+        << "\t-H  --height [val]             window height (defualt: 720)\n"
         << "\t-W  --width [val]              window width (defualt: 720)\n";
 }
 
