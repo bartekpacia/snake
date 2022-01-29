@@ -52,7 +52,11 @@ Game::Game(const GameSettings& settings) {
         std::stringstream buffer;
         buffer << input_score_file.rdbuf();
         std::string high_score = buffer.str();
-        high_score_ = std::stoi(high_score);
+        try {
+            high_score_ = std::stoi(high_score);
+        } catch (const std::invalid_argument& e) {
+            high_score_ = 0;
+        }
     }
 }
 
