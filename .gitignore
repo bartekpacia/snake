@@ -20,6 +20,7 @@ Debug
 *.fls
 *.out
 *.pdf
+*.synctex.gz
 
 # other
 *.user
