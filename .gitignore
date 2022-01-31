@@ -19,7 +19,7 @@ Debug
 *.fdb_latexmk
 *.fls
 *.out
-*.pdf
+# *.pdf
 *.synctex.gz
 
 # other
