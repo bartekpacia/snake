@@ -131,35 +131,8 @@ void Game::move_snake() {
             high_score_ = score_;
         }
 
-        // very ugly solution of adding new position, but works just fine for
-        // the most part
-        sf::Vector2i new_segment_position;
-        switch (move_status_) {
-            case MoveStatus::LEFT: {
-                new_segment_position =
-                    sf::Vector2i(new_snake_positions.back().x + 1,
-                                 new_snake_positions.back().y);
-                break;
-            }
-            case MoveStatus::UP: {
-                new_segment_position =
-                    sf::Vector2i(new_snake_positions.back().x,
-                                 new_snake_positions.back().y + 1);
-                break;
-            }
-            case MoveStatus::RIGHT: {
-                new_segment_position =
-                    sf::Vector2i(new_snake_positions.back().x - 1,
-                                 new_snake_positions.back().y);
-                break;
-            }
-            case MoveStatus::DOWN: {
-                new_segment_position =
-                    sf::Vector2i(new_snake_positions.back().x,
-                                 new_snake_positions.back().y - 1);
-                break;
-            }
-        }
+        // add new segment in place of the last one in the old snake_positions
+        sf::Vector2i new_segment_position = snake_positions_.back();
 
         new_snake_positions.push_back(new_segment_position);
 
