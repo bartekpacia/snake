@@ -1,9 +1,5 @@
 {
-  "makefile.launchConfigurations": [
-    {
-      "cwd": "/Users/bartek/dev/bartekpacia/snake",
-      "binaryPath": "/Users/bartek/dev/bartekpacia/snake/snake",
-      "binaryArgs": []
-    }
-  ]
+  "C_Cpp.codeAnalysis.exclude": {
+    "sfml": true
+  },
 }
