@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 
-typedef sf::Color Color;
+using Color = sf::Color;
 
 struct GameSettings {
     bool running = true;
@@ -20,7 +20,7 @@ struct GameSettings {
     unsigned int height = 720;
     unsigned int grid_size = 16;
     sf::Font font;
-    unsigned int interval_ms = 500.0f;
+    unsigned int interval_ms = 500.0F;
 
     Color color_background = Color::Black;
     Color color_snake = Color::Green;
@@ -33,16 +33,21 @@ struct GameSettings {
 enum class TileObject { Empty, Snake, Pickup };
 
 /**
- * GUI is responsible for the visual layer of the application and interacting
+ * Game is responsible for the visual layer of the application and interacting
  * with the user.
  */
 class Game {
    public:
     explicit Game(const GameSettings& settings);
-    virtual bool update();
-    virtual ~Game() = default;
+    Game(const Game&) = delete;
+    Game(const Game&&) = delete;
+    Game& operator=(const Game&) = delete;
+    Game& operator=(const Game&&) = delete;
+    ~Game() = default;
 
-    int high_score() { return high_score_; }
+    bool update();
+
+    unsigned int high_score() const { return high_score_; }
 
    private:
     enum class MoveStatus {

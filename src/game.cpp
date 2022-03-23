@@ -1,8 +1,6 @@
 #include "../include/game.h"
 
-Game::Game(const GameSettings& settings) {
-    settings_ = settings;
-
+Game::Game(const GameSettings& settings) : settings_(settings) {
     sf::ContextSettings window_settings;
     window_settings.antialiasingLevel = settings_.antialiasing;
 
@@ -211,29 +209,34 @@ void Game::handle_input() {
             std::cout << "snake: window resized: " << event.size.width << "x"
                       << event.size.height << std::endl;
         }
-        if (event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed) {
             settings_.running = false;
+        }
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Left)
+            if (event.key.code == sf::Keyboard::Left) {
                 move_status_ = MoveStatus::LEFT;
-            if (event.key.code == sf::Keyboard::Up)
+            }
+            if (event.key.code == sf::Keyboard::Up) {
                 move_status_ = MoveStatus::UP;
-            if (event.key.code == sf::Keyboard::Right)
+            }
+            if (event.key.code == sf::Keyboard::Right) {
                 move_status_ = MoveStatus::RIGHT;
-            if (event.key.code == sf::Keyboard::Down)
+            }
+            if (event.key.code == sf::Keyboard::Down) {
                 move_status_ = MoveStatus::DOWN;
+            }
         }
     }
 }
 
 void Game::render_grid() {
-    double width = settings_.width / settings_.grid_size;
-    double height = settings_.height / settings_.grid_size;
+    auto width = static_cast<float>(settings_.width / settings_.grid_size);
+    auto height = static_cast<float>(settings_.height / settings_.grid_size);
 
     for (int i = 0; i < settings_.grid_size; i++) {
         for (int j = 0; j < settings_.grid_size; j++) {
-            auto x = width * i;
-            auto y = height * j;
+            int x = width * i;
+            int y = height * j;
             auto tileObject = state_[i][j];
 
             Color color = settings_.color_background;

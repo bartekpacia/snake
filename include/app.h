@@ -4,7 +4,11 @@
 class App {
    public:
     explicit App(std::vector<std::string>& args);
-    ~App();
+    App(const App&) = delete;
+    App(const App&&) = delete;
+    App& operator=(const App&) = delete;
+    App& operator=(const App&&) = delete;
+    ~App() = default;
 
     int run();
     static void print_help();
@@ -27,6 +31,6 @@ class App {
      */
     bool init(std::vector<std::string>& args);
 
-    bool running_;
+    bool running_ = true;
     std::unique_ptr<Game> game_;
 };

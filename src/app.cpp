@@ -2,13 +2,10 @@
 #include <algorithm>
 
 App::App(std::vector<std::string>& args) {
-    running_ = true;
     if (!init(args)) {
         running_ = false;
     }
 }
-
-App::~App() = default;
 
 int App::run() {
     while (running_) {
