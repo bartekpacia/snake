@@ -57,8 +57,10 @@ class Game {
         DOWN,
     };
 
-    // event loop methods
+    // menu
+    void open_menu();
 
+    // event loop methods
     void handle_logic();
     void handle_input();
     void render_grid();
@@ -79,8 +81,8 @@ class Game {
     unsigned int high_score_;
 
     std::vector<std::vector<TileObject>> state_;
-    std::vector<sf::Vector2i> snake_positions_;
-    sf::Vector2i point_pos_;
+    std::vector<sf::Vector2u> snake_positions_;
+    sf::Vector2u point_pos_;
 
     GameSettings settings_;
     sf::RenderWindow window_;

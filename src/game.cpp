@@ -1,4 +1,5 @@
 #include "../include/game.h"
+#include "../include/menu.h"
 
 Game::Game(const GameSettings& settings) : settings_(settings) {
     sf::ContextSettings window_settings;
@@ -12,15 +13,18 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
                    sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize,
                    window_settings);
 
+    // open menu screen
+    open_menu();
+
     move_status_ = MoveStatus::LEFT;
 
     timestamp_ = std::chrono::system_clock::now().time_since_epoch() /
                  std::chrono::seconds(1);
 
     // fill the board with empty tiles
-    for (auto i = 0; i < settings.grid_size; i++) {
+    for (size_t i = 0; i < settings.grid_size; i++) {
         std::vector<TileObject> row;
-        for (auto j = 0; j < settings.grid_size; j++) {
+        for (size_t j = 0; j < settings.grid_size; j++) {
             row.push_back(TileObject::Empty);
         }
         state_.push_back(row);
@@ -28,7 +32,7 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
 
     // place snake head on the board
     auto snake_head_position =
-        sf::Vector2i(state_.size() / 2, state_.size() / 2);
+        sf::Vector2u(state_.size() / 2, state_.size() / 2);
 
     // Always update these two state variables when updating snake position.
     snake_positions_.push_back(snake_head_position);
@@ -39,7 +43,7 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
     std::random_device random_device;
     std::mt19937 generator(random_device());
     std::uniform_int_distribution<> random(0, settings.grid_size - 1);
-    point_pos_ = sf::Vector2i(random(generator), random(generator));
+    point_pos_ = sf::Vector2u(random(generator), random(generator));
     state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
 
     // load high score
@@ -59,39 +63,39 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
 }
 
 void Game::move_snake() {
-    std::vector<sf::Vector2i> new_snake_positions =
+    std::vector<sf::Vector2u> new_snake_positions =
         std::vector(snake_positions_);
 
     switch (move_status_) {
         case MoveStatus::LEFT: {
             new_snake_positions[0] =
-                sf::Vector2i(snake_positions_[0].x - 1, snake_positions_[0].y);
+                sf::Vector2u(snake_positions_[0].x - 1, snake_positions_[0].y);
 
-            for (int i = 1; i < snake_positions_.size(); i++) {
+            for (size_t i = 1; i < snake_positions_.size(); i++) {
                 new_snake_positions[i] = snake_positions_[i - 1];
             }
             break;
         }
         case MoveStatus::UP: {
             new_snake_positions[0] =
-                sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y - 1);
-            for (int i = 1; i < snake_positions_.size(); i++) {
+                sf::Vector2u(snake_positions_[0].x, snake_positions_[0].y - 1);
+            for (size_t i = 1; i < snake_positions_.size(); i++) {
                 new_snake_positions[i] = snake_positions_[i - 1];
             }
             break;
         }
         case MoveStatus::RIGHT: {
             new_snake_positions[0] =
-                sf::Vector2i(snake_positions_[0].x + 1, snake_positions_[0].y);
-            for (int i = 1; i < snake_positions_.size(); i++) {
+                sf::Vector2u(snake_positions_[0].x + 1, snake_positions_[0].y);
+            for (size_t i = 1; i < snake_positions_.size(); i++) {
                 new_snake_positions[i] = snake_positions_[i - 1];
             }
             break;
         }
         case MoveStatus::DOWN: {
             new_snake_positions[0] =
-                sf::Vector2i(snake_positions_[0].x, snake_positions_[0].y + 1);
-            for (int i = 1; i < snake_positions_.size(); i++) {
+                sf::Vector2u(snake_positions_[0].x, snake_positions_[0].y + 1);
+            for (size_t i = 1; i < snake_positions_.size(); i++) {
                 new_snake_positions[i] = snake_positions_[i - 1];
             }
             break;
@@ -108,7 +112,7 @@ void Game::move_snake() {
     }
 
     // LOST: snake hit itself
-    for (int i = 1; i < new_snake_positions.size(); i++) {
+    for (size_t i = 1; i < new_snake_positions.size(); i++) {
         auto segment = new_snake_positions[i];
         auto head = new_snake_positions.front();
 
@@ -130,7 +134,7 @@ void Game::move_snake() {
         }
 
         // add new segment in place of the last one in the old snake_positions
-        sf::Vector2i new_segment_position = snake_positions_.back();
+        sf::Vector2u new_segment_position = snake_positions_.back();
 
         new_snake_positions.push_back(new_segment_position);
 
@@ -161,10 +165,10 @@ void Game::new_crystal() {
         x = random(generator);
         y = random(generator);
     } while (std::find(snake_positions_.begin(), snake_positions_.end(),
-                       sf::Vector2i(x, y)) != snake_positions_.end());
+                       sf::Vector2u(x, y)) != snake_positions_.end());
 
     state_[x][y] = TileObject::Pickup;
-    point_pos_ = sf::Vector2i(x, y);
+    point_pos_ = sf::Vector2u(x, y);
 }
 
 bool Game::update() {
@@ -183,6 +187,50 @@ bool Game::update() {
     window_.display();
 
     return true;
+}
+
+void Game::open_menu() {
+    Menu menu(settings_.width, settings_.height);
+    while (window_.isOpen()) {
+        sf::Event event;
+        while (window_.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::Up:
+                            menu.MoveUp();
+                            break;
+                        case sf::Keyboard::Down:
+                            menu.MoveDown();
+                            break;
+                        case sf::Keyboard::Q:
+                            settings_.running = false;
+                            return;
+                        case sf::Keyboard::Enter:
+                            switch (menu.getPressedItem()) {
+                                case Menu::Options::PLAY:
+                                    return;
+                                case Menu::Options::INFO:
+                                    menu.open_info(settings_.width,
+                                                   settings_.height, window_);
+                                    break;
+                                case Menu::Options::QUIT:
+                                    settings_.running = false;
+                                    return;
+                                default:
+                                    break;
+                            }
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }
+        window_.clear(sf::Color(1, 3, 50));
+        menu.draw(window_);
+        window_.display();
+    }
 }
 
 void Game::handle_logic() {
@@ -233,8 +281,8 @@ void Game::render_grid() {
     auto width = static_cast<float>(settings_.width / settings_.grid_size);
     auto height = static_cast<float>(settings_.height / settings_.grid_size);
 
-    for (int i = 0; i < settings_.grid_size; i++) {
-        for (int j = 0; j < settings_.grid_size; j++) {
+    for (size_t i = 0; i < settings_.grid_size; i++) {
+        for (size_t j = 0; j < settings_.grid_size; j++) {
             int x = width * i;
             int y = height * j;
             auto tileObject = state_[i][j];
