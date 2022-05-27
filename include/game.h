@@ -11,8 +11,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "menu.h"
 
 using Color = sf::Color;
+class Menu;
 
 struct GameSettings {
     bool running = true;
@@ -57,8 +59,11 @@ class Game {
         DOWN,
     };
 
-    // event loop methods
+    // menu
+    void open_menu();
+    void handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu);
 
+    // event loop methods
     void handle_logic();
     void handle_input();
     void render_grid();
@@ -79,8 +84,8 @@ class Game {
     unsigned int high_score_;
 
     std::vector<std::vector<TileObject>> state_;
-    std::vector<sf::Vector2i> snake_positions_;
-    sf::Vector2i point_pos_;
+    std::vector<sf::Vector2u> snake_positions_;
+    sf::Vector2u point_pos_;
 
     GameSettings settings_;
     sf::RenderWindow window_;
