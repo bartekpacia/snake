@@ -11,8 +11,10 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "menu.h"
 
 using Color = sf::Color;
+class Menu;
 
 struct GameSettings {
     bool running = true;
@@ -59,6 +61,7 @@ class Game {
 
     // menu
     void open_menu();
+    void handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu);
 
     // event loop methods
     void handle_logic();

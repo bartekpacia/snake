@@ -194,42 +194,52 @@ void Game::open_menu() {
     while (window_.isOpen()) {
         sf::Event event;
         while (window_.pollEvent(event)) {
+            bool leave_menu = false;
             switch (event.type) {
                 case sf::Event::KeyPressed:
-                    switch (event.key.code) {
-                        case sf::Keyboard::Up:
-                            menu.MoveUp();
-                            break;
-                        case sf::Keyboard::Down:
-                            menu.MoveDown();
-                            break;
-                        case sf::Keyboard::Q:
-                            settings_.running = false;
-                            return;
-                        case sf::Keyboard::Enter:
-                            switch (menu.getPressedItem()) {
-                                case Menu::Options::PLAY:
-                                    return;
-                                case Menu::Options::INFO:
-                                    menu.open_info(settings_.width,
-                                                   settings_.height, window_);
-                                    break;
-                                case Menu::Options::QUIT:
-                                    settings_.running = false;
-                                    return;
-                                default:
-                                    break;
-                            }
-                        default:
-                            break;
-                    }
+                    handle_menu_input(event, menu, leave_menu);
+                    if (leave_menu)
+                        return;
                 default:
                     break;
             }
         }
-        window_.clear(sf::Color(1, 3, 50));
+        sf::Color midnight_blue(1, 3, 50);
+        window_.clear(midnight_blue);
         menu.draw(window_);
         window_.display();
+    }
+}
+
+void Game::handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu) {
+    switch (event.key.code) {
+        case sf::Keyboard::Up:
+            menu.move_up();
+            break;
+        case sf::Keyboard::Down:
+            menu.move_down();
+            break;
+        case sf::Keyboard::Q:
+            settings_.running = false;
+            leave_menu = true;
+            return;
+        case sf::Keyboard::Enter:
+            switch (menu.get_selected_action()) {
+                case Menu::Action::PLAY:
+                    leave_menu = true;
+                    return;
+                case Menu::Action::INFO:
+                    menu.open_info(settings_.width, settings_.height, window_);
+                    break;
+                case Menu::Action::QUIT:
+                    settings_.running = false;
+                    leave_menu = true;
+                    return;
+                default:
+                    break;
+            }
+        default:
+            break;
     }
 }
 

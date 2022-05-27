@@ -5,16 +5,16 @@
 
 class Menu {
    private:
-    size_t numberOfOptions{3};
+    size_t action_count{3};
     size_t selectedOptionIndex{0};
     sf::Font font;
     std::vector<sf::Text> m_menu;
 
    public:
     Menu(double width, double height);
-    ~Menu();
+    ~Menu() = default;
 
-    enum class Options {
+    enum class Action {
         PLAY,
         INFO,
         QUIT,
@@ -27,10 +27,10 @@ class Menu {
                    sf::RenderWindow& window) const;
 
     void draw(sf::RenderWindow& window) const;
-    void MoveUp();
-    void MoveDown();
+    void move_up();
+    void move_down();
 
-    Options getPressedItem() const {
-        return static_cast<Options>(selectedOptionIndex);
+    Action get_selected_action() const {
+        return static_cast<Action>(selectedOptionIndex);
     }
 };

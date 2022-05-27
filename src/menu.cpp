@@ -1,7 +1,7 @@
 #include "../include/menu.h"
 
 Menu::Menu(double width, double height) {
-    m_menu.resize(numberOfOptions);
+    m_menu.resize(action_count);
     const std::vector<std::string> options = {"Play", "Info", "Quit"};
     const int avg_char_width = 5;
 
@@ -9,17 +9,16 @@ Menu::Menu(double width, double height) {
         std::clog << "snake: error loading font file" << std::endl;
     }
 
-    for (size_t i = 0; i < numberOfOptions; i++) {
+    for (size_t i = 0; i < action_count; i++) {
+        double action_width = width / 2 - options[i].size() * avg_char_width;
+        double action_height = height / (action_count + 1) * (i + 1);
+
         m_menu[i].setFont(font);
         m_menu[i].setString(options[i]);
-        m_menu[i].setPosition(
-            sf::Vector2f(width / 2 - options[i].size() * avg_char_width,
-                         height / (numberOfOptions + 1) * (i + 1)));
+        m_menu[i].setPosition(sf::Vector2f(action_width, action_height));
         m_menu[i].setFillColor(i == 0 ? sf::Color::Red : sf::Color::White);
     }
 }
-
-Menu::~Menu(){};
 
 void Menu::open_info(float width, float height, sf::RenderWindow& window) {
     while (window.isOpen()) {
@@ -40,7 +39,8 @@ void Menu::open_info(float width, float height, sf::RenderWindow& window) {
             }
         }
 
-        window.clear(sf::Color(1, 3, 50));
+        sf::Color midnight_blue(1, 3, 50);
+        window.clear(midnight_blue);
         draw_text(0 * width, 0 * height,
                   "no i ja sie pytam czlowieku dumny ty \njestes z siebie "
                   "zdajesz sobie \nsprawe z tego co robisz?\nmasz ty wogole "
@@ -63,11 +63,11 @@ void Menu::draw_text(float x,
 }
 
 void Menu::draw(sf::RenderWindow& window) const {
-    for (size_t i = 0; i < numberOfOptions; i++)
+    for (size_t i = 0; i < action_count; i++)
         window.draw(m_menu[i]);
 }
 
-void Menu::MoveUp() {
+void Menu::move_up() {
     if (selectedOptionIndex > 0) {
         m_menu[selectedOptionIndex].setFillColor(sf::Color::White);
         selectedOptionIndex--;
@@ -75,8 +75,8 @@ void Menu::MoveUp() {
     }
 }
 
-void Menu::MoveDown() {
-    if (selectedOptionIndex + 1 < numberOfOptions) {
+void Menu::move_down() {
+    if (selectedOptionIndex + 1 < action_count) {
         m_menu[selectedOptionIndex].setFillColor(sf::Color::White);
         selectedOptionIndex++;
         m_menu[selectedOptionIndex].setFillColor(sf::Color::Red);
