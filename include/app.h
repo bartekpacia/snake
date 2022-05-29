@@ -8,18 +8,17 @@ class App {
     App(const App&&) = delete;
     App& operator=(const App&) = delete;
     App& operator=(const App&&) = delete;
-    ~App()  = default;
+    ~App() = default;
 
     int run();
-        static void print_help();
+    static void print_help();
 
    private:
     static bool is_flag_present(std::vector<std::string>& all_args,
                                 const std::string& short_arg,
                                 const std::string& long_arg);
 
-    static std::string get_flag_value(
-        std::vector<std::string>& all_args,
+    static std::string get_flag_value(std::vector<std::string>& all_args,
                                       const std::string& short_arg,
                                       const std::string& long_arg,
                                       const std::string& default_value = "");
