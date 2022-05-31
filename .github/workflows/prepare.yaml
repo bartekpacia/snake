@@ -1,4 +1,4 @@
-name: Prepare
+name: prepare
 
 on:
   workflow_dispatch:
