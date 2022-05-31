@@ -205,7 +205,7 @@ void Game::print_game_over() {
     window_.display();
 
     /* make user stuck in the game over screen until
-     * he presses a key
+     * they press a key
      */
     while (window_.isOpen()) {
         sf::Event event;
