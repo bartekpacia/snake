@@ -1,16 +1,12 @@
 #include "../include/menu.h"
 
-Menu::Menu(double width, double height) {
+Menu::Menu(double width_, double height_, sf::Font font_)
+    : width(width_), height(height_), font(font_) {
     m_menu.resize(action_count);
     const std::vector<std::string> options = {"Play", "Info", "Quit"};
-    const int avg_char_width = 5;
-
-    if (!font.loadFromFile("arial.ttf")) {
-        std::clog << "snake: error loading font file" << std::endl;
-    }
 
     for (size_t i = 0; i < action_count; i++) {
-        double action_width = width / 2 - options[i].size() * avg_char_width;
+        double action_width = width / 2 - m_menu[i].getLocalBounds().width;
         double action_height = height / (action_count + 1) * (i + 1);
 
         m_menu[i].setFont(font);
@@ -20,7 +16,7 @@ Menu::Menu(double width, double height) {
     }
 }
 
-void Menu::open_info(float width, float height, sf::RenderWindow& window) {
+void Menu::open_info(sf::RenderWindow& window) {
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {

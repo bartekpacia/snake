@@ -5,13 +5,15 @@
 
 class Menu {
    private:
+    double width;
+    double height;
     size_t action_count{3};
     size_t selectedOptionIndex{0};
     sf::Font font;
     std::vector<sf::Text> m_menu;
 
    public:
-    Menu(double width, double height);
+    Menu(double width_, double height_, sf::Font font_);
     ~Menu() = default;
 
     enum class Action {
@@ -20,7 +22,7 @@ class Menu {
         QUIT,
     };
 
-    void open_info(float width, float height, sf::RenderWindow& window);
+    void open_info(sf::RenderWindow& window);
     void draw_text(float x,
                    float y,
                    const std::string& text,

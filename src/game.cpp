@@ -107,7 +107,7 @@ void Game::move_snake() {
         new_snake_positions[0].x > settings_.grid_size - 1 ||
         new_snake_positions[0].y > settings_.grid_size - 1) {
         std::cout << "LOST (OUT OF BOUNDS)" << std::endl;
-        settings_.running = false;
+        game_over = true;
         return;
     }
 
@@ -118,7 +118,7 @@ void Game::move_snake() {
 
         if (head.x == segment.x && head.y == segment.y) {
             std::cout << "LOST (SNAKE HIT ITSELF)" << std::endl;
-            settings_.running = false;
+            game_over = true;
             return;
         }
     }
@@ -184,13 +184,51 @@ bool Game::update() {
     render_grid();
     render_ui();
 
+    if (game_over) {
+        print_game_over();
+        return false;
+    }
     window_.display();
 
     return true;
 }
 
+void Game::print_game_over() {
+    // prepare game over message
+    sf::Text text;
+    text.setFont(settings_.font);
+    text.setFillColor(sf::Color::White);
+    text.setString("GAME OVER");
+    text.setPosition((settings_.width - text.getLocalBounds().width) / 2,
+                     (settings_.height - text.getLocalBounds().height) / 2);
+    window_.draw(text);
+    window_.display();
+
+    /* make user stuck in the game over screen until
+     * he presses a key
+     */
+    while (window_.isOpen()) {
+        sf::Event event;
+        while (window_.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::Q:
+                        case sf::Keyboard::Escape:
+                        case ::sf::Keyboard::Enter:
+                            return;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }
+    }
+}
+
 void Game::open_menu() {
-    Menu menu(settings_.width, settings_.height);
+    Menu menu(settings_.width, settings_.height, settings_.font);
     while (window_.isOpen()) {
         sf::Event event;
         while (window_.pollEvent(event)) {
@@ -229,7 +267,7 @@ void Game::handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu) {
                     leave_menu = true;
                     return;
                 case Menu::Action::INFO:
-                    menu.open_info(settings_.width, settings_.height, window_);
+                    menu.open_info(window_);
                     break;
                 case Menu::Action::QUIT:
                     settings_.running = false;
