@@ -22,11 +22,7 @@ class Menu {
         QUIT,
     };
 
-<<<<<<< HEAD
-    void open_info(sf::RenderWindow& window);
-=======
     void open_info(sf::RenderWindow& window) const;
->>>>>>> 3ec9479c56848fd0335ee8f16ea82edb180c81f9
     void draw_text(float x,
                    float y,
                    const std::string& text,

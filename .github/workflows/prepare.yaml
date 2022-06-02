@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-name: Prepare
-=======
 name: prepare
->>>>>>> 3ec9479c56848fd0335ee8f16ea82edb180c81f9
 
 on:
   workflow_dispatch:
