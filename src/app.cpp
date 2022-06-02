@@ -17,10 +17,11 @@ int App::run() {
         }
     }
 
-    std::ofstream high_score_output("high_score.txt");
-    high_score_output << game_->high_score();
-    high_score_output.close();
-
+    if (game_) {
+        std::ofstream high_score_output("high_score.txt");
+        high_score_output << game_->high_score();
+        high_score_output.close();
+    }
     return 0;
 }
 
