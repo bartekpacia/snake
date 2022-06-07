@@ -195,13 +195,15 @@ bool Game::update() {
 
 void Game::print_game_over() {
     // prepare game over message
-    sf::Text text;
-    text.setFont(settings_.font);
-    text.setFillColor(sf::Color::White);
-    text.setString("GAME OVER");
-    text.setPosition((settings_.width - text.getLocalBounds().width) / 2,
-                     (settings_.height - text.getLocalBounds().height) / 2);
-    window_.draw(text);
+    sf::Text game_over_text;
+    game_over_text.setFont(settings_.font);
+    game_over_text.setFillColor(settings_.color_ui);
+    game_over_text.setString("GAME OVER!");
+    game_over_text.setStyle(sf::Text::Bold);
+    game_over_text.setPosition(
+        (settings_.width - game_over_text.getLocalBounds().width) / 2,
+        (settings_.height - game_over_text.getLocalBounds().height) / 2);
+    window_.draw(game_over_text);
     window_.display();
 
     /* make user stuck in the game over screen until
@@ -381,6 +383,7 @@ void Game::render_ui() {
     high_score_text.setCharacterSize(24);
     high_score_text.setFillColor(settings_.color_ui);
     high_score_text.setStyle(sf::Text::Bold);
-    high_score_text.setPosition(256, 32);
+    high_score_text.setPosition(
+        (settings_.width - high_score_text.getLocalBounds().width) / 2, 32);
     window_.draw(high_score_text);
 }
