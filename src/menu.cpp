@@ -20,7 +20,14 @@ Menu::Menu(double width_, double height_, sf::Font font_)
 void Menu::open_info(sf::RenderWindow& window) const {
     sf::Color midnight_blue(1, 3, 50);
     window.clear(midnight_blue);
-    draw_text(0 * width, 0 * height, "CONTROLS:\n", window);
+    draw_text(
+        0 * width, 0 * height,
+        L"CONTROLS:\n\t[ ← ] - Turn snake's head West\n\t[ → ] - Turn snake's "
+        L"head East \n\t[ ↑ ] - Turn snake's head North\n\t[ ↓ ] - Turn "
+        L"snake's "
+        L"head South\n\t[ ENTER ] - Select an option\n\t[ "
+        L"P ] - Pause the game\n\t[ R ] - Restart the game\n\t[ ESC/Q ] - Quit",
+        window);
     window.display();
 
     while (window.isOpen()) {
@@ -45,7 +52,7 @@ void Menu::open_info(sf::RenderWindow& window) const {
 
 void Menu::draw_text(float x,
                      float y,
-                     const std::string& text,
+                     const std::wstring& text,
                      sf::RenderWindow& window) const {
     sf::Text T;
     T.setString(text);

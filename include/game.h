@@ -68,7 +68,9 @@ class Game {
     void handle_input();
     void render_grid();
     void render_ui();
-    void print_game_over();
+    void handle_game_over();
+    void reset_game();
+    void pause_game();
 
     // game event methods
     void move_snake();
@@ -84,6 +86,7 @@ class Game {
     unsigned int score_;
     unsigned int high_score_;
     bool game_over;
+    bool paused;
 
     std::vector<std::vector<TileObject>> state_;
     std::vector<sf::Vector2u> snake_positions_;
