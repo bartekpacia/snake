@@ -184,21 +184,89 @@ bool Game::update() {
     render_grid();
     render_ui();
 
-    if (game_over) {
-        print_game_over();
-        return false;
+    if (game_over)
+        handle_game_over();
+    else if (paused) {
+        pause_game();
+        paused = false;
     }
     window_.display();
 
     return true;
 }
 
-void Game::print_game_over() {
+void Game::reset_game() {
+    /* reset game progress */
+    score_ = 0;
+    game_over = false;
+    move_status_ = MoveStatus::LEFT;
+
+    // fill the board with empty tiles
+    for (size_t i = 0; i < settings_.grid_size; i++)
+        std::fill(state_[i].begin(), state_[i].end(), TileObject::Empty);
+
+    // place snake head on the board
+    auto snake_head_position =
+        sf::Vector2u(state_.size() / 2, state_.size() / 2);
+
+    // Always update these two state variables when updating snake position.
+    snake_positions_.clear();
+    snake_positions_.push_back(snake_head_position);
+    state_[snake_positions_.front().x][snake_positions_.front().y] =
+        TileObject::Snake;
+
+    // place the first point on the board
+    std::random_device random_device;
+    std::mt19937 generator(random_device());
+    std::uniform_int_distribution<> random(0, settings_.grid_size - 1);
+    point_pos_ = sf::Vector2u(random(generator), random(generator));
+    state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
+}
+
+void Game::pause_game() {
+    sf::Text pause_text;
+    pause_text.setFont(settings_.font);
+    pause_text.setFillColor(settings_.color_ui);
+    pause_text.setString("PAUSED!\n[P] to unpause.");
+    pause_text.setOutlineColor(sf::Color::Black);
+    pause_text.setOutlineThickness(1);
+    pause_text.setStyle(sf::Text::Bold);
+    pause_text.setPosition(
+        (settings_.width - pause_text.getLocalBounds().width) / 2,
+        (settings_.height - pause_text.getLocalBounds().height) / 2);
+    window_.draw(pause_text);
+    window_.display();
+
+    while (window_.isOpen()) {
+        sf::Event event;
+        while (window_.pollEvent(event)) {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window_.close();
+                    settings_.running = false;
+                    return;
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::P:
+                            return;
+                        default:
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+void Game::handle_game_over() {
     // prepare game over message
     sf::Text game_over_text;
     game_over_text.setFont(settings_.font);
     game_over_text.setFillColor(settings_.color_ui);
-    game_over_text.setString("GAME OVER!");
+    game_over_text.setString("GAME OVER!\n[R] to restart,\n[ESC/Q] to quit.");
+    game_over_text.setOutlineColor(sf::Color::Black);
+    game_over_text.setOutlineThickness(1);
     game_over_text.setStyle(sf::Text::Bold);
     game_over_text.setPosition(
         (settings_.width - game_over_text.getLocalBounds().width) / 2,
@@ -213,11 +281,20 @@ void Game::print_game_over() {
         sf::Event event;
         while (window_.pollEvent(event)) {
             switch (event.type) {
+                case sf::Event::Closed:
+                    window_.close();
+                    settings_.running = false;
+                    return;
                 case sf::Event::KeyPressed:
                     switch (event.key.code) {
                         case sf::Keyboard::Q:
                         case sf::Keyboard::Escape:
-                        case ::sf::Keyboard::Enter:
+                        case sf::Keyboard::Enter:
+                            reset_game();
+                            open_menu();
+                            return;
+                        case sf::Keyboard::R:
+                            reset_game();
                             return;
                         default:
                             break;
@@ -323,6 +400,9 @@ void Game::handle_input() {
             if (event.key.code == sf::Keyboard::Down) {
                 move_status_ = MoveStatus::DOWN;
             }
+            if (event.key.code == sf::Keyboard::P) {
+                paused = true;
+            }
         }
     }
 }
@@ -366,6 +446,8 @@ void Game::render_ui() {
 
     score_text.setCharacterSize(24);
     score_text.setFillColor(settings_.color_ui);
+    score_text.setOutlineColor(sf::Color::Black);
+    score_text.setOutlineThickness(1);
     score_text.setStyle(sf::Text::Bold);
     score_text.setPosition(32, 32);
     window_.draw(score_text);
@@ -382,6 +464,8 @@ void Game::render_ui() {
 
     high_score_text.setCharacterSize(24);
     high_score_text.setFillColor(settings_.color_ui);
+    high_score_text.setOutlineColor(sf::Color::Black);
+    high_score_text.setOutlineThickness(1);
     high_score_text.setStyle(sf::Text::Bold);
     high_score_text.setPosition(
         (settings_.width - high_score_text.getLocalBounds().width) / 2, 32);
