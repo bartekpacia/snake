@@ -23,7 +23,7 @@ class App {
                                       const std::string& long_arg,
                                       const std::string& default_value = "");
 
-    /**
+    /***
      * Init performs command-line argument and flag parsing. Then it initializes
      * core components of the game.
      * @param args command-line arguments and flags

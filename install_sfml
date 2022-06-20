@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 # This script installs SFML. It detects whether the user is
 # running Linux or macOS.
 
