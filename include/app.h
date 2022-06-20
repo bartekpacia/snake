@@ -1,6 +1,6 @@
 #pragma once
 #include "game.h"
-//
+
 class App {
    public:
     explicit App(std::vector<std::string>& args);

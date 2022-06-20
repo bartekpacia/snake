@@ -1,4 +1,4 @@
-{//
+{
   "version": "2.0.0",
   "tasks": [
     {
@@ -9,7 +9,9 @@
       "options": {
         "cwd": "${workspaceFolder}"
       },
-      "problemMatcher": ["$gcc"],
+      "problemMatcher": [
+        "$gcc"
+      ],
       "group": {
         "kind": "build",
         "isDefault": true
