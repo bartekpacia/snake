@@ -5,7 +5,7 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
     sf::ContextSettings window_settings;
     window_settings.antialiasingLevel = settings_.antialiasing;
 
-    if (!settings_.font.loadFromFile("arial.ttf")) {
+    if (!settings_.font.loadFromFile("fonts/arial.ttf")) {
         std::clog << "snake: error loading font file" << std::endl;
     }
 
