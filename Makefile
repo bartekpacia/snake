@@ -14,7 +14,8 @@ all: main.o app.o game.o menu.o
 	game.o \
 	menu.o \
 	$(LDFLAGS) \
-	$(LIBS)
+	$(LIBS) \
+	-rpath "@executable_path/sfml/lib"
 
 main.o: src/main.cpp
 	$(CXX) $(CPPFLAGS) -c src/main.cpp $(INCLUDES)
