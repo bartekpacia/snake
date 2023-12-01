@@ -21,4 +21,7 @@ jobs:
         run: ./install_sfml
 
       - name: Run build
-        run: make
+        run: |
+          cd .. && mkdir snake-build && cd snake-build
+          cmake ../snake
+          make
