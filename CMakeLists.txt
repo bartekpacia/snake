@@ -32,6 +32,6 @@ target_link_libraries(${TARGET} PRIVATE
     sfml-window
     sfml-system)
 
-file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR}/bin/fonts/XD)
+file(COPY fonts DESTINATION ${CMAKE_BINARY_DIR}/bin)
 
 install(TARGETS ${TARGET})
