@@ -27,7 +27,7 @@ class App {
      * Init performs command-line argument and flag parsing. Then it initializes
      * core components of the game.
      * @param args command-line arguments and flags
-     * @return true if init was successful successful, false otherwise
+     * @return true if init was successful, false otherwise
      */
     bool init(std::vector<std::string>& args);
 

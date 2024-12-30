@@ -7,37 +7,53 @@ of Technology.
 
 ## Building
 
+### With CMake
+
+Open the project in CLion, or alternatively from command line:
+
+```console
+git clone git@github.com:bartekpacia/snake.git
+mkdir snake-build
+cd snake-build
+cmake ../snake
+make
+```
+
+Then `cd bin/` and run `./snake`.
+
+### With Make
+
 1. Clone the repository.
 2. Download SFML using `install_sfml` script:
 
-```
-$ ./install_sfml
-```
+    ```console
+    $ ./install_sfml
+    ```
 
 3. Build the project using `make`:
 
-```
-$ make
-```
+    ```console
+    $ make
+    ```
 
 ## Running
 
 To run the game:
 
-```
+```console
 $ ./snake
 ```
 
-A cool feature is that you can modify snake's speed and grid size by passing
+A cool feature is that you can modify snake's speed and grid size by specifying
 arguments:
 
-```
+```console
 $ ./snake --width 64 --height 64 --interval 100 # snake moves every 100 ms
 ```
 
 To see help:
 
-```
+```console
 $ snake --help
 ```
 

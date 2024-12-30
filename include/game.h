@@ -1,15 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
 #include <SFML/Window.hpp>
-#include <algorithm>
 #include <chrono>
-#include <fstream>
-#include <iomanip>
-#include <iostream>
-#include <random>
-#include <sstream>
-#include <string>
 #include <vector>
 #include "menu.h"
 
@@ -61,7 +53,9 @@ class Game {
 
     // menu
     void open_menu();
-    void handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu);
+    void handle_menu_input(const sf::Event::KeyPressed& event,
+                           Menu& menu,
+                           bool& leave_menu);
 
     // event loop methods
     void handle_logic();

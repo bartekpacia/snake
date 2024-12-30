@@ -5,20 +5,46 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-linux:
+    name: Build on Linux
     runs-on: ubuntu-latest
+
+    env:
+      CC: gcc-14
+      CXX: g++-14
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Clone repository
+        uses: actions/checkout@v4
 
       - name: Run clang-format style check for C/C++ code
-        uses: jidicula/clang-format-action@v4.11.0
+        uses: jidicula/clang-format-action@v4.14.0
         with:
           clang-format-version: 14
           check-path: '.'
           fallback-style: Chromium
 
       - name: Install dependencies
-        run: ./install_sfml
+        run: |
+          ./install_sfml
+          sudo apt-get install libx11-dev xorg-dev libudev-dev libopenal-dev libvorbis-dev libflac-dev
 
       - name: Run build
-        run: make
+        run: |
+          cd .. && mkdir snake-build && cd snake-build
+          cmake ../snake
+          make
+
+  build-macos:
+    name: Build on macOS
+    runs-on: macos-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Run build
+        run: |
+          cd .. && mkdir snake-build && cd snake-build
+          cmake ../snake
+          make
