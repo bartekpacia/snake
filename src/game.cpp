@@ -1,17 +1,26 @@
 #include "../include/game.h"
+
+#include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <random>
+#include <sstream>
+
 #include "../include/menu.h"
 
-Game::Game(const GameSettings& settings) : settings_(settings) {
+Game::Game(const GameSettings& settings)
+    : score_(0), game_over(false), paused(false), settings_(settings) {
     sf::ContextSettings window_settings;
-    window_settings.antialiasingLevel = settings_.antialiasing;
+    window_settings.antiAliasingLevel = settings_.antialiasing;
 
-    if (!settings_.font.loadFromFile("fonts/arial.ttf")) {
+    if (!settings_.font.openFromFile("fonts/arial.ttf")) {
         std::clog << "snake: error loading font file" << std::endl;
     }
 
-    window_.create(sf::VideoMode(settings_.width, settings_.height), "snake",
-                   sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize,
-                   window_settings);
+    window_.create(
+        sf::VideoMode(sf::Vector2u(settings_.width, settings_.height)), "snake",
+        sf::Style::Close | sf::Style::Titlebar | sf::Style::Resize,
+        sf::State::Windowed, window_settings);
 
     // open menu screen
     open_menu();
@@ -47,8 +56,8 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
     state_[point_pos_.x][point_pos_.y] = TileObject::Pickup;
 
     // load high score
-    std::ifstream input_score_file("high_score.txt");
-    if (input_score_file.fail()) {
+    if (std::ifstream input_score_file("high_score.txt");
+        input_score_file.fail()) {
         high_score_ = 0;
     } else {
         std::stringstream buffer;
@@ -63,8 +72,7 @@ Game::Game(const GameSettings& settings) : settings_(settings) {
 }
 
 void Game::move_snake() {
-    std::vector<sf::Vector2u> new_snake_positions =
-        std::vector(snake_positions_);
+    auto new_snake_positions = std::vector(snake_positions_);
 
     switch (move_status_) {
         case MoveStatus::LEFT: {
@@ -142,13 +150,13 @@ void Game::move_snake() {
     }
 
     // clear old snake
-    for (auto& old_snake_pos : snake_positions_) {
+    for (const auto& old_snake_pos : snake_positions_) {
         state_[old_snake_pos.x][old_snake_pos.y] = TileObject::Empty;
     }
 
     // update state with new snake
     snake_positions_ = new_snake_positions;
-    for (auto& snake_pos : snake_positions_) {
+    for (const auto& snake_pos : snake_positions_) {
         state_[snake_pos.x][snake_pos.y] = TileObject::Snake;
     }
 }
@@ -184,9 +192,9 @@ bool Game::update() {
     render_grid();
     render_ui();
 
-    if (game_over)
+    if (game_over) {
         handle_game_over();
-    else if (paused) {
+    } else if (paused) {
         pause_game();
         paused = false;
     }
@@ -206,7 +214,7 @@ void Game::reset_game() {
         std::fill(state_[i].begin(), state_[i].end(), TileObject::Empty);
 
     // place snake head on the board
-    auto snake_head_position =
+    const auto snake_head_position =
         sf::Vector2u(state_.size() / 2, state_.size() / 2);
 
     // Always update these two state variables when updating snake position.
@@ -224,53 +232,52 @@ void Game::reset_game() {
 }
 
 void Game::pause_game() {
-    sf::Text pause_text;
-    pause_text.setFont(settings_.font);
+    sf::Text pause_text(settings_.font);
     pause_text.setFillColor(settings_.color_ui);
     pause_text.setString("PAUSED!\n[P] to unpause.");
     pause_text.setOutlineColor(sf::Color::Black);
     pause_text.setOutlineThickness(1);
     pause_text.setStyle(sf::Text::Bold);
-    pause_text.setPosition(
-        (settings_.width - pause_text.getLocalBounds().width) / 2,
-        (settings_.height - pause_text.getLocalBounds().height) / 2);
+    pause_text.setPosition({
+        (settings_.width - pause_text.getLocalBounds().position.x) / 2,
+        (settings_.height - pause_text.getLocalBounds().position.y) / 2,
+    });
     window_.draw(pause_text);
     window_.display();
 
     while (window_.isOpen()) {
-        sf::Event event;
-        while (window_.pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window_.close();
-                    settings_.running = false;
-                    return;
-                case sf::Event::KeyPressed:
-                    switch (event.key.code) {
-                        case sf::Keyboard::P:
-                            return;
-                        default:
-                            break;
-                    }
-                default:
-                    break;
+        while (const std::optional event = window_.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window_.close();
+                settings_.running = false;
+                return;
+            } else if (const auto* keyPressed =
+                           event->getIf<sf::Event::KeyPressed>()) {
+                switch (keyPressed->scancode) {
+                    case sf::Keyboard::Scan::P:
+                        return;
+                    default:
+                        break;
+                }
+            } else {
+                break;
             }
         }
     }
 }
 
 void Game::handle_game_over() {
-    // prepare game over message
-    sf::Text game_over_text;
-    game_over_text.setFont(settings_.font);
+    // prepare the "game over" message
+    sf::Text game_over_text(settings_.font);
     game_over_text.setFillColor(settings_.color_ui);
     game_over_text.setString("GAME OVER!\n[R] to restart,\n[ESC/Q] to quit.");
     game_over_text.setOutlineColor(sf::Color::Black);
     game_over_text.setOutlineThickness(1);
     game_over_text.setStyle(sf::Text::Bold);
-    game_over_text.setPosition(
-        (settings_.width - game_over_text.getLocalBounds().width) / 2,
-        (settings_.height - game_over_text.getLocalBounds().height) / 2);
+    game_over_text.setPosition({
+        (settings_.width - game_over_text.getLocalBounds().position.x) / 2,
+        (settings_.height - game_over_text.getLocalBounds().position.x) / 2,
+    });
     window_.draw(game_over_text);
     window_.display();
 
@@ -278,29 +285,29 @@ void Game::handle_game_over() {
      * they press a key
      */
     while (window_.isOpen()) {
-        sf::Event event;
-        while (window_.pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::Closed:
-                    window_.close();
-                    settings_.running = false;
-                    return;
-                case sf::Event::KeyPressed:
-                    switch (event.key.code) {
-                        case sf::Keyboard::Q:
-                        case sf::Keyboard::Escape:
-                        case sf::Keyboard::Enter:
-                            reset_game();
-                            open_menu();
-                            return;
-                        case sf::Keyboard::R:
-                            reset_game();
-                            return;
-                        default:
-                            break;
-                    }
-                default:
-                    break;
+        while (const std::optional event = window_.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window_.close();
+                settings_.running = false;
+                return;
+            }
+            if (const auto* keyPressed =
+                    event->getIf<sf::Event::KeyPressed>()) {
+                switch (keyPressed->scancode) {
+                    case sf::Keyboard::Scan::Q:
+                    case sf::Keyboard::Scan::Escape:
+                    case sf::Keyboard::Scan::Enter:
+                        reset_game();
+                        open_menu();
+                        return;
+                    case sf::Keyboard::Scan::R:
+                        reset_game();
+                        return;
+                    default:
+                        break;
+                }
+            } else {
+                break;
             }
         }
     }
@@ -309,16 +316,15 @@ void Game::handle_game_over() {
 void Game::open_menu() {
     Menu menu(settings_.width, settings_.height, settings_.font);
     while (window_.isOpen()) {
-        sf::Event event;
-        while (window_.pollEvent(event)) {
-            bool leave_menu = false;
-            switch (event.type) {
-                case sf::Event::KeyPressed:
-                    handle_menu_input(event, menu, leave_menu);
-                    if (leave_menu)
-                        return;
-                default:
-                    break;
+        while (const std::optional event = window_.pollEvent()) {
+            if (const auto keyPressed = event->getIf<sf::Event::KeyPressed>()) {
+                bool leave_menu = false;
+                handle_menu_input(*keyPressed, menu, leave_menu);
+                if (leave_menu) {
+                    return;
+                }
+            } else {
+                break;
             }
         }
         sf::Color midnight_blue(1, 3, 50);
@@ -328,19 +334,21 @@ void Game::open_menu() {
     }
 }
 
-void Game::handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu) {
-    switch (event.key.code) {
-        case sf::Keyboard::Up:
+void Game::handle_menu_input(const sf::Event::KeyPressed& event,
+                             Menu& menu,
+                             bool& leave_menu) {
+    switch (event.scancode) {
+        case sf::Keyboard::Scan::Up:
             menu.move_up();
             break;
-        case sf::Keyboard::Down:
+        case sf::Keyboard::Scan::Down:
             menu.move_down();
             break;
-        case sf::Keyboard::Q:
+        case sf::Keyboard::Scan::Q:
             settings_.running = false;
             leave_menu = true;
             return;
-        case sf::Keyboard::Enter:
+        case sf::Keyboard::Scan::Enter:
             switch (menu.get_selected_action()) {
                 case Menu::Action::PLAY:
                     leave_menu = true;
@@ -351,7 +359,6 @@ void Game::handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu) {
                 case Menu::Action::QUIT:
                     settings_.running = false;
                     leave_menu = true;
-                    return;
                 default:
                     break;
             }
@@ -361,8 +368,9 @@ void Game::handle_menu_input(sf::Event& event, Menu& menu, bool& leave_menu) {
 }
 
 void Game::handle_logic() {
-    auto new_timestamp = std::chrono::system_clock::now().time_since_epoch() /
-                         std::chrono::milliseconds(settings_.interval_ms);
+    const auto new_timestamp =
+        std::chrono::system_clock::now().time_since_epoch() /
+        std::chrono::milliseconds(settings_.interval_ms);
 
     if (new_timestamp > timestamp_) {
         move_snake();
@@ -373,34 +381,31 @@ void Game::handle_logic() {
 }
 
 void Game::handle_input() {
-    sf::Event event;
-    while (window_.pollEvent(event)) {
-        if (event.type == sf::Event::Resized) {
-            settings_.width = event.size.width;
-            settings_.height = event.size.height;
-            sf::FloatRect visible_area(0, 0, event.size.width,
-                                       event.size.height);
+    while (const std::optional event = window_.pollEvent()) {
+        if (const auto resized = event->getIf<sf::Event::Resized>()) {
+            settings_.width = resized->size.x;
+            settings_.height = resized->size.y;
+            sf::FloatRect visible_area({0, 0},
+                                       {
+                                           static_cast<float>(resized->size.x),
+                                           static_cast<float>(resized->size.y),
+                                       });
             window_.setView(sf::View(visible_area));
-            std::cout << "snake: window resized: " << event.size.width << "x"
-                      << event.size.height << std::endl;
-        }
-        if (event.type == sf::Event::Closed) {
+            std::cout << "snake: window resized: " << resized->size.x << "x"
+                      << resized->size.y << std::endl;
+        } else if (event->is<sf::Event::Closed>()) {
             settings_.running = false;
-        }
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Left) {
+        } else if (const auto keyPressed =
+                       event->getIf<sf::Event::KeyPressed>()) {
+            if (keyPressed->scancode == sf::Keyboard::Scan::Left) {
                 move_status_ = MoveStatus::LEFT;
-            }
-            if (event.key.code == sf::Keyboard::Up) {
+            } else if (keyPressed->scancode == sf::Keyboard::Scan::Up) {
                 move_status_ = MoveStatus::UP;
-            }
-            if (event.key.code == sf::Keyboard::Right) {
+            } else if (keyPressed->scancode == sf::Keyboard::Scan::Right) {
                 move_status_ = MoveStatus::RIGHT;
-            }
-            if (event.key.code == sf::Keyboard::Down) {
+            } else if (keyPressed->scancode == sf::Keyboard::Scan::Down) {
                 move_status_ = MoveStatus::DOWN;
-            }
-            if (event.key.code == sf::Keyboard::P) {
+            } else if (keyPressed->scancode == sf::Keyboard::Scan::P) {
                 paused = true;
             }
         }
@@ -413,9 +418,9 @@ void Game::render_grid() {
 
     for (size_t i = 0; i < settings_.grid_size; i++) {
         for (size_t j = 0; j < settings_.grid_size; j++) {
-            int x = width * i;
-            int y = height * j;
-            auto tileObject = state_[i][j];
+            float x = width * i;
+            float y = height * j;
+            const auto tileObject = state_[i][j];
 
             Color color = settings_.color_background;
             if (tileObject == TileObject::Snake) {
@@ -426,7 +431,7 @@ void Game::render_grid() {
             }
 
             auto tile = sf::RectangleShape(sf::Vector2f(width, height));
-            tile.setPosition(x, y);
+            tile.setPosition({x, y});
             tile.setFillColor(color);
             window_.draw(tile);
         }
@@ -435,9 +440,7 @@ void Game::render_grid() {
 
 void Game::render_ui() {
     // render score text
-    sf::Text score_text;
-
-    score_text.setFont(settings_.font);
+    sf::Text score_text(settings_.font);
 
     std::string score;
     score.append("Score: ");
@@ -449,13 +452,11 @@ void Game::render_ui() {
     score_text.setOutlineColor(sf::Color::Black);
     score_text.setOutlineThickness(1);
     score_text.setStyle(sf::Text::Bold);
-    score_text.setPosition(32, 32);
+    score_text.setPosition(sf::Vector2f(32, 32));
     window_.draw(score_text);
 
     // render high score text
-    sf::Text high_score_text;
-
-    high_score_text.setFont(settings_.font);
+    sf::Text high_score_text(settings_.font);
 
     std::string high_score;
     high_score.append("High score: ");
@@ -467,7 +468,7 @@ void Game::render_ui() {
     high_score_text.setOutlineColor(sf::Color::Black);
     high_score_text.setOutlineThickness(1);
     high_score_text.setStyle(sf::Text::Bold);
-    high_score_text.setPosition(
-        (settings_.width - high_score_text.getLocalBounds().width) / 2, 32);
+    high_score_text.setPosition(sf::Vector2f(
+        (settings_.width - high_score_text.getLocalBounds().size.x) / 2, 32));
     window_.draw(high_score_text);
 }

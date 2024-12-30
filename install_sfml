@@ -35,11 +35,11 @@ fi
 download_url="null"
 case "$(uname -s)" in
     Linux*)
-        download_url="https://www.sfml-dev.org/files/SFML-2.6.0-linux-gcc-64-bit.tar.gz"
+        download_url="https://www.sfml-dev.org/files/SFML-3.0.0-linux-gcc-64-bit.tar.gz"
         _log "install_sfml: detected Linux host\n"
     ;;
     Darwin*)
-        download_url="https://www.sfml-dev.org/files/SFML-2.6.0-macOS-clang-arm64.tar.gz"
+        download_url="https://www.sfml-dev.org/files/SFML-3.0.0-macOS-clang-arm64.tar.gz"
         _log "install_sfml: detected macOS host\n"
     ;;
     *)

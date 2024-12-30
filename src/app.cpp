@@ -1,5 +1,8 @@
 #include "../include/app.h"
 #include <algorithm>
+#include <fstream>
+#include <iostream>
+#include <sstream>
 
 App::App(std::vector<std::string>& args) {
     if (!init(args)) {
@@ -9,9 +12,8 @@ App::App(std::vector<std::string>& args) {
 
 int App::run() {
     while (running_) {
-        if (running_ && game_) {
-            bool ok = game_->update();
-            if (!ok) {
+        if (game_) {
+            if (const bool ok = game_->update(); !ok) {
                 running_ = false;
             }
         }
@@ -42,10 +44,10 @@ void App::print_help() {
 bool App::is_flag_present(std::vector<std::string>& all_args,
                           const std::string& short_arg,
                           const std::string& long_arg) {
-    auto it = std::find_if(all_args.begin(), all_args.end(),
-                           [short_arg, long_arg](const std::string& s) {
-                               return s == short_arg || s == long_arg;
-                           });
+    const auto it = std::find_if(all_args.begin(), all_args.end(),
+                                 [short_arg, long_arg](const std::string& s) {
+                                     return s == short_arg || s == long_arg;
+                                 });
 
     if (it == all_args.end()) {
         return false;

@@ -2,14 +2,14 @@
 
 Menu::Menu(double width_, double height_, sf::Font font_)
     : width(width_), height(height_), font(font_) {
-    m_menu.resize(action_count);
     const std::vector<std::string> options = {"Play", "Info", "Quit"};
 
     for (size_t i = 0; i < action_count; i++) {
+        m_menu.emplace_back(font);
         m_menu[i].setFont(font);
         m_menu[i].setString(options[i]);
 
-        double action_width = (width - m_menu[i].getLocalBounds().width) / 2;
+        double action_width = (width - m_menu[i].getLocalBounds().size.x) / 2;
         double action_height = height / (action_count + 1) * (i + 1);
 
         m_menu[i].setPosition(sf::Vector2f(action_width, action_height));
@@ -31,20 +31,19 @@ void Menu::open_info(sf::RenderWindow& window) const {
     window.display();
 
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            switch (event.type) {
-                case sf::Event::KeyPressed:
-                    switch (event.key.code) {
-                        case sf::Keyboard::Q:
-                        case sf::Keyboard::Escape:
-                        case ::sf::Keyboard::Enter:
-                            return;
-                        default:
-                            break;
-                    }
-                default:
-                    break;
+        while (const std::optional event = window.pollEvent()) {
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+            } else if (const auto* keyPressed =
+                           event->getIf<sf::Event::KeyPressed>()) {
+                switch (keyPressed->scancode) {
+                    case sf::Keyboard::Scan::Q:
+                    case sf::Keyboard::Scan::Escape:
+                    case sf::Keyboard::Scan::Enter:
+                        return;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -54,10 +53,9 @@ void Menu::draw_text(float x,
                      float y,
                      const std::wstring& text,
                      sf::RenderWindow& window) const {
-    sf::Text T;
+    sf::Text T(font);
     T.setString(text);
-    T.setFont(font);
-    T.setPosition(x, y);
+    T.setPosition({x, y});
     T.setFillColor(sf::Color::White);
     window.draw(T);
 }
